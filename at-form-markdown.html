@@ -1,0 +1,232 @@
+<script src="scripts/prettify.js"></script>
+<script src="scripts/Markdown.js"></script>
+<script src="scripts/Markdown.Editor.js"></script>
+<script src="scripts/Markdown.Extra.js"></script>
+<script src="scripts/markdown-inline-attachment.js"></script>
+<script src="scripts/markdown-input.inline-attachment.js"></script>
+
+<link rel="import" href="markdown-default-converter.html" />
+
+<!--
+    at-form-markdown is a polymer component for markdown markup
+    @attributes
+      antiforgerytokenvalueorchard - antiforgerytoken is injected into the component because inline-attachment feature uses it; 
+                                    also inline-attachment doens't need to work outside of orchard so its ok for now to be this way
+
+      insertImageEnabled - when "false" (string false) it disables inline-attachment feature and removes the text at the bottom for inserting images
+
+    @components used
+        markdown-default-converter
+            - this component is a client side converter based on polymer marked-element; when no other is supplied via shadow insertion ponit this one is used as default
+
+    @usage
+        <at-form-markdown></at-form-markdown> somewhere on the page
+
+    @why is this this way?
+        @font-face polymer has issues with @font-face and solution here is how that issue is solved. you add a style tag with @font-face declaration and call it a day
+        component has html structure for text editing and preview, default converter and shadow insertion point
+        inline-attachment code is merged into the component and feature is initialized in place
+        since this component is based on original orchard markdown editor that code is more or less unchanged and resides in *.js files above
+      
+        personally I dislike how inline-attachment is currently implemented - I think hooks should be used, but that needs additional time to figure out
+-->
+
+
+
+<style>
+  @font-face {
+    font-family: 'icomoon';
+    src: url('styles/pretty-toolbar/icomoon.eot?-i2ywrq');
+    src: url('styles/pretty-toolbar/icomoon.eot?#iefix-i2ywrq') format('embedded-opentype'), url('styles/pretty-toolbar/icomoon.woff?-i2ywrq') format('woff'), url('styles/pretty-toolbar/icomoon.ttf?-i2ywrq') format('truetype'), url('styles/pretty-toolbar/icomoon.svg?-i2ywrq#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+  }
+</style>
+
+<polymer-element name="at-form-markdown" attributes="antiforgerytokenvalueorchard insertImageEnabled">
+  <template>
+    <link rel="stylesheet" href="styles/at-form-markdown.css" />
+    <link rel="stylesheet" href="styles/prettify.css" />
+    <link rel="stylesheet" href="styles/pretty-toolbar/pretty-toolbar.css" />
+
+    <div class="{{ class }}">
+      <div id="wmdBox" class="wmd-box" onload="prettyPrint()">
+        <div class="wmd-innerbox">
+          <div id="wmdButtonBar" class="wmd-button-bar"></div>
+          <div class="wmd-editor-box">
+            <textarea id="wmdInput"
+                      name="{{ name }}"
+                      rows="7"
+                      cols="80"
+                      class="wmd-input"></textarea>
+            <div id="markdownBottomText">
+              <div id="chromeText" style="display: none">Attach images by dragging and dropping, <a id="chromeTextLink" href="javascript:void(0)">selecting them</a>, or pasting from the clipboard.</div>
+              <div id="nonChromeText" style="display: none">Attach images by dragging and dropping or <a id="nonChromeTextLink" href="javascript:void(0)">selecting them</a>.</div>
+              <div style="display: none"> <input id="fileInput" type="file" /></div>
+            </div>
+          </div>
+          <div class="wmd-preview-box" style="display: none">
+            <div id="wmdPreview" class="wmd-panel wmd-preview"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <markdown-default-converter id="defaultConverter"></markdown-default-converter>
+    <shadow id="shadow"></shadow>
+  </template>
+  <script>
+    window.isFunction = function (obj) {
+      return obj !== undefined && Object.prototype.toString(obj) === Object.prototype.toString(function () { });
+    }
+
+    Polymer('at-form-markdown', {
+      _instanceVariables: {
+        converter: undefined,
+        mediaPicker: undefined
+      },
+      ready: function (event) {
+        // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
+        var shadowDistributedNodes = this.$.shadow.getDistributedNodes();
+        // find the converter
+        this._instanceVariables.converter = this.$.defaultConverter;
+        this._instanceVariables.mediaPicker = undefined;
+        for (var i = 0; i < shadowDistributedNodes.length; i++) {
+          var node = shadowDistributedNodes[i];
+          // *ij* subject to change but it makes sense that
+          if (node.id === "converter" // id of the element be "converter"
+            && node._converterInstance !== undefined // element should have a _converterInstance variable
+            && isFunction(node._converterInstance.makeHtml) // and _converterInstance should have makeHtml function
+            ) {
+            this._instanceVariables.converter = node._converterInstance;
+          }
+          if (node.id === "mediaPicker"
+            && isFunction(node.addHooks)
+            ) {
+            this._instanceVariables.mediaPicker = node;
+          }
+        }
+
+        var converter = this._instanceVariables.converter;
+
+        // 2) initialize the Markdown.Extra
+        Markdown.Extra.init(converter, {
+          extensions: "all",
+          highlighter: "prettify"
+        });
+
+        // 3) instantiate the Markdown.Editor
+        var panelsCollection = {
+          buttonBar: this.$.wmdButtonBar,
+          preview: this.$.wmdPreview,
+          input: this.$.wmdInput
+        };
+
+        var editor = new Markdown.Editor(converter, {
+          handler: function () { window.open("http://daringfireball.net/projects/markdown/syntax"); }
+        }, panelsCollection, this.shadowRoot);
+
+        // 4) init the mediapicker hooks
+        if (this._instanceVariables.mediaPicker !== undefined) {
+          this._instanceVariables.mediaPicker.addHooks(editor, this.$.wmdInput);
+        }
+
+        // 5) initialize inline attachment plugin
+        this._initializeInlineAttachment();
+
+        // 6) initialize the footer text
+        this.__initializeBottomText();
+
+        // 7) setup the autoGrow function
+        Markdown.autoGrow(this.$.wmdInput);
+
+        // 8) initialize google code prettify
+        editor.hooks.chain("onPreviewRefresh", prettyPrint); // google code prettify
+
+        // 9) run the editor
+        editor.run();
+      },
+      _initializeInlineAttachment: function () {
+        if (this.insertImageEnabled === "false") { return; }
+        var _self = this;
+        _self.converterOptions = {
+          antiForgeryTokenValueOrchard: this.antiforgerytokenvalueorchard
+        };
+
+        inlineAttachment.editors.input.attachToInput(this.$.wmdInput,
+          {
+            uploadUrl: '/Orchard.MediaLibrary/ClientStorage/Upload',
+            jsonFieldName: "mediaUrl",
+            onFileUploadResponse: function (xhr) {
+              var result = JSON.parse(xhr.responseText),
+                filename = result[0][this.settings.jsonFieldName];
+
+              if (result && filename) {
+                var newValue = this.settings.urlText.replace(this.filenameTag, filename);
+                newValue = newValue.replace(this.originalNameTag, this.settings.originalName);
+                var text = this.editor.getValue().replace(this.lastValue, newValue);
+                this.editor.setValue(text);
+              }
+
+              var keypressEvent = document.createEvent('Event');
+              keypressEvent.initEvent('keypress', true, true);
+              _self.$.wmdInput.dispatchEvent(keypressEvent);
+
+              return true;
+            },
+            setupFormData: function (formData, file) {
+              // *ij* here "this" is the inline-attachment settings object
+              var originalName = this.originalName;
+              if (file.name != undefined && file.name.indexOf(".") > -1) {
+                var fileNameParts = file.name.split('.');
+                originalName = fileNameParts[0];
+              }
+
+              this.originalName = originalName;
+            },
+            extraParams: {
+              "__RequestVerificationToken": _self.converterOptions.antiForgeryTokenValueOrchard,
+              "folderPath": "attachments",
+              "type": "Image"
+            }
+          });
+      },
+
+      __initializeBottomText: function (event) {
+        var fileInput = this.$.fileInput;
+        var textArea = this.$.wmdInput;
+
+        if (this.insertImageEnabled === "false") { return; }
+
+        if (window.chrome !== undefined) {
+          // browser is google chrome
+          var chromeText = this.$.chromeText;
+          chromeText.style.display = "block";
+          var chromeTextLink = this.$.chromeTextLink;
+          chromeTextLink.addEventListener('click', function (e) {
+            fileInput.click();
+            e.preventDefault();
+          }, false);
+        } else {
+          // its some other browser
+          var nonChromeText = this.$.nonChromeText;
+          nonChromeText.style.display = "block";
+          var nonChromeTextLink = this.$.nonChromeTextLink;
+          nonChromeTextLink.addEventListener('click', function (e) {
+            fileInput.click();
+            e.preventDefault();
+          }, false);
+        }
+
+        fileInput.addEventListener('change', function (e) {
+          e.preventDefault();
+          var dropEvent = document.createEvent('Event');
+          dropEvent.initEvent('drop', true, true);
+          dropEvent.dataTransfer = {};
+          dropEvent.dataTransfer.files = e.target.files;
+          textArea.dispatchEvent(dropEvent);
+        });
+      }
+    });
+  </script>
+</polymer-element>
+

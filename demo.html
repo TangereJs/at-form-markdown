@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <script src="../webcomponentsjs/webcomponents.js"></script>
+  <link rel="import" href="../polymer/polymer.html" />
+  <link rel="import" href="at-form-markdown.html" />
+  <link rel="import" href="markdown-default-converter.html" />
+  <link rel="import" href="markdown-sanitizing-decorator/markdown-sanitizing-decorator.html" />
+</head>
+<body>
+  <at-form-markdown id="afMarkdown">
+    <markdown-sanitizing-decorator id="converter">
+      <markdown-default-converter id="converter"></markdown-default-converter>
+    </markdown-sanitizing-decorator>
+  </at-form-markdown>
+
+  <script>
+    document.addEventListener('polymer-ready', function (e) {
+      var markdown = document.getElementById('afMarkdown');
+    });
+  </script>
+</body>
+</html>

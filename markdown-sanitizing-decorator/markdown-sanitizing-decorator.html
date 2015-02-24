@@ -1,0 +1,55 @@
+﻿
+<script src="scripts/Markdown.Sanitizer.js"></script>
+
+<!--
+    markdown-sanitizing-decorator is a polymer component for sanitizing html
+    @attributes
+        nonw
+
+    @components used
+        none
+
+    @usage
+        <markdown-sanitizing-decorator id="converter"></markdown-sanitizing-decorator> somewhere inside at-form-markdown; it must have id="converter" to be properly detected
+  
+        this component is decorator and is made to sanitize output form markdown-default-converter or markdown-remote-converter
+        to achieve this use this construct
+        <markdown-sanitizing-decorator id="converter">
+          <markdown-remote-converter id="converter"></markdown-remote-converter>
+        </markdown-sanitizing-decorator>
+  
+    @why is this this way?
+        originaly this sanitizer was working only with original orchard.markdown client side converter
+        since both client side and remote converter need sanitization making a decorator / wrapper for them makes sense
+        sanitizer attaches to hooks of converters to perform its job
+-->
+
+
+<polymer-element name="markdown-sanitizing-decorator">
+  <template>
+    <shadow id="shadow"></shadow>
+  </template>
+  <script>
+    Polymer('markdown-sanitizing-decorator', {
+      _converterInstance: undefined,
+      ready: function () {
+        var shadowDistributedNodes = this.$.shadow.getDistributedNodes();
+        for (var i = 0; i < shadowDistributedNodes.length; i++) {
+          var node = shadowDistributedNodes[i];
+          // *ij* subject to change but it makes sense that 
+          if (node.id === "converter" // id of the element be "converter"
+            && node._converterInstance !== undefined // element should have a _converterInstance variable
+            && window.isFunction(node._converterInstance.makeHtml) // and _converterInstance should have makeHtml function
+            ) {
+            this._converterInstance = node._converterInstance;
+            break;
+          }
+        }
+
+        if (this._converterInstance !== undefined) {
+          this._converterInstance = Markdown.sanitizeConverter(this._converterInstance);
+        }
+      }
+    });
+  </script>
+</polymer-element>
