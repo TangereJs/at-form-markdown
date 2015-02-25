@@ -28,7 +28,7 @@
         component has html structure for text editing and preview, default converter and shadow insertion point
         inline-attachment code is merged into the component and feature is initialized in place
         since this component is based on original orchard markdown editor that code is more or less unchanged and resides in *.js files above
-      
+
         personally I dislike how inline-attachment is currently implemented - I think hooks should be used, but that needs additional time to figure out
 -->
 
@@ -72,9 +72,9 @@
         </div>
       </div>
     </div>
-    <markdown-sanitizing-converter id="defaultConverter">
+    <markdown-sanitizing-decorator id="defaultConverter">
       <markdown-default-converter id="converter"></markdown-default-converter>
-    </markdown-sanitizing-converter>
+    </markdown-sanitizing-decorator>
     <shadow id="shadow"></shadow>
   </template>
   <script>
@@ -86,6 +86,10 @@
       _instanceVariables: {
         converter: undefined,
         mediaPicker: undefined
+      },
+      publish: {
+        value: '',
+        reflect: true
       },
       ready: function (event) {
         // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
@@ -147,6 +151,15 @@
 
         // 9) run the editor
         editor.run();
+
+        // 10) attach to wmdInput chage event to update component value
+        var _self = this;
+        this.$.wmdInput.addEventListener('change', function (e) {
+          _self.value = _self.$.wmdInput.value;
+        });
+      },
+      valueChanged: function (oldValue, newValue) {
+        this.$.wmdInput.value = this.value;
       },
       _initializeInlineAttachment: function () {
         if (this.insertImageEnabled === "false") { return; }
