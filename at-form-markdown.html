@@ -6,6 +6,7 @@
 <script src="scripts/markdown-input.inline-attachment.js"></script>
 
 <link rel="import" href="markdown-default-converter.html" />
+<link rel="import" href="markdown-sanitizing-decorator/markdown-sanitizing-decorator.html" />
 
 <!--
     at-form-markdown is a polymer component for markdown markup
@@ -71,7 +72,9 @@
         </div>
       </div>
     </div>
-    <markdown-default-converter id="defaultConverter"></markdown-default-converter>
+    <markdown-sanitizing-converter id="defaultConverter">
+      <markdown-default-converter id="converter"></markdown-default-converter>
+    </markdown-sanitizing-converter>
     <shadow id="shadow"></shadow>
   </template>
   <script>
@@ -88,7 +91,7 @@
         // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
         var shadowDistributedNodes = this.$.shadow.getDistributedNodes();
         // find the converter
-        this._instanceVariables.converter = this.$.defaultConverter;
+        this._instanceVariables.converter = this.$.defaultConverter._converterInstance;
         this._instanceVariables.mediaPicker = undefined;
         for (var i = 0; i < shadowDistributedNodes.length; i++) {
           var node = shadowDistributedNodes[i];

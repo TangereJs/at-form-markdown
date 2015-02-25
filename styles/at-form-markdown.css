@@ -41,6 +41,7 @@
   overflow: hidden;
   resize: none;
   min-height: 200px;
+  font-size: inherit;
 }
 
 .wmd-box {
