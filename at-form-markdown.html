@@ -11,10 +11,10 @@
 <!--
     at-form-markdown is a polymer component for markdown markup
     @attributes
-      antiforgerytokenvalueorchard - antiforgerytoken is injected into the component because inline-attachment feature uses it; 
-                                    also inline-attachment doens't need to work outside of orchard so its ok for now to be this way
-
       insertImageEnabled - when "false" (string false) it disables inline-attachment feature and removes the text at the bottom for inserting images
+      inlineAttachmentUploadUrl - url for uploading meda (eg. images)
+      inlineAttachmentJsonFieldName - the name of the field in response which contains the filenanme of the uploaded file
+      inlineAttachmentExtraParams - extra parameters that will be sent with each request in request body
 
     @components used
         markdown-default-converter
@@ -44,7 +44,7 @@
   }
 </style>
 
-<polymer-element name="at-form-markdown" attributes="antiforgerytokenvalueorchard insertImageEnabled">
+<polymer-element name="at-form-markdown" attributes="insertImageEnabled">
   <template>
     <link rel="stylesheet" href="styles/at-form-markdown.css" />
     <link rel="stylesheet" href="styles/prettify.css" />
@@ -88,8 +88,22 @@
         mediaPicker: undefined
       },
       publish: {
-        value: '',
-        reflect: true
+        value: {
+          value: '',
+          reflect: true
+        },
+        inlineAttachmentExtraParams: {
+          value: {},
+          reflect: true
+        },
+        inlineAttachmentUploadUrl: {
+          value: '',
+          reflect: true
+        },
+        inlineAttachmentJsonFieldName: {
+          value: '',
+          reflect: true
+        }
       },
       ready: function (event) {
         // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
@@ -161,6 +175,15 @@
       valueChanged: function (oldValue, newValue) {
         this.$.wmdInput.value = this.value;
       },
+      inlineAttachmentUploadUrlChanged: function (oldValue, newValue) {
+        this._inlineAttachmentInstance.settings.uploadUrl = this.inlineAttachmentUploadUrl;
+      },
+      inlineAttachmentJsonFieldNameChanged: function (oldValue, newValue) {
+        this._inlineAttachmentInstance.settings.jsonFieldName = this.inlineAttachmentJsonFieldName;
+      },
+      inlineAttachmentExtraParamsChanged: function (oldValue, newValue) {
+        this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
+      },
       _initializeInlineAttachment: function () {
         if (this.insertImageEnabled === "false") { return; }
         var _self = this;
@@ -168,10 +191,10 @@
           antiForgeryTokenValueOrchard: this.antiforgerytokenvalueorchard
         };
 
-        inlineAttachment.editors.input.attachToInput(this.$.wmdInput,
+        this._inlineAttachmentInstance = inlineAttachment.editors.input.attachToInput(this.$.wmdInput,
           {
-            uploadUrl: '/Orchard.MediaLibrary/ClientStorage/Upload',
-            jsonFieldName: "mediaUrl",
+            uploadUrl: this.inlineAttachmentUploadUrl,
+            jsonFieldName: this.inlineAttachmentJsonFieldName,
             onFileUploadResponse: function (xhr) {
               var result = JSON.parse(xhr.responseText),
                 filename = result[0][this.settings.jsonFieldName];
@@ -199,11 +222,7 @@
 
               this.originalName = originalName;
             },
-            extraParams: {
-              "__RequestVerificationToken": _self.converterOptions.antiForgeryTokenValueOrchard,
-              "folderPath": "attachments",
-              "type": "Image"
-            }
+            extraParams: this.inlineAttachmentExtraParams
           });
       },
 
@@ -245,4 +264,3 @@
     });
   </script>
 </polymer-element>
-
