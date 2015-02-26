@@ -175,20 +175,23 @@
         this.$.wmdInput.value = this.value;
       },
       inlineAttachmentUploadUrlChanged: function (oldValue, newValue) {
+        this._initializeInlineAttachment();
+        this.__initializeBottomText();
         this._inlineAttachmentInstance.settings.uploadUrl = this.inlineAttachmentUploadUrl;
       },
       inlineAttachmentJsonFieldNameChanged: function (oldValue, newValue) {
-        this._inlineAttachmentInstance.settings.jsonFieldName = this.inlineAttachmentJsonFieldName;
+        if (this._inlineAttachmentInstance !== undefined) {
+          this._inlineAttachmentInstance.settings.jsonFieldName = this.inlineAttachmentJsonFieldName;
+        }
       },
       inlineAttachmentExtraParamsChanged: function (oldValue, newValue) {
-        this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
+        if (this._inlineAttachmentInstance !== undefined) {
+          this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
+        }
       },
       _initializeInlineAttachment: function () {
         if (this.inlineAttachmentUploadUrl === undefined || this.inlineAttachmentUploadUrl === '') { return; }
         var _self = this;
-        _self.converterOptions = {
-          antiForgeryTokenValueOrchard: this.antiforgerytokenvalueorchard
-        };
 
         this._inlineAttachmentInstance = inlineAttachment.editors.input.attachToInput(this.$.wmdInput,
           {
