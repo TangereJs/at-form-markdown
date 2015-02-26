@@ -11,7 +11,6 @@
 <!--
     at-form-markdown is a polymer component for markdown markup
     @attributes
-      insertImageEnabled - when "false" (string false) it disables inline-attachment feature and removes the text at the bottom for inserting images
       inlineAttachmentUploadUrl - url for uploading meda (eg. images)
       inlineAttachmentJsonFieldName - the name of the field in response which contains the filenanme of the uploaded file
       inlineAttachmentExtraParams - extra parameters that will be sent with each request in request body
@@ -44,7 +43,7 @@
   }
 </style>
 
-<polymer-element name="at-form-markdown" attributes="insertImageEnabled">
+<polymer-element name="at-form-markdown">
   <template>
     <link rel="stylesheet" href="styles/at-form-markdown.css" />
     <link rel="stylesheet" href="styles/prettify.css" />
@@ -185,7 +184,7 @@
         this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
       },
       _initializeInlineAttachment: function () {
-        if (this.insertImageEnabled === "false") { return; }
+        if (this.inlineAttachmentUploadUrl === undefined || this.inlineAttachmentUploadUrl === '') { return; }
         var _self = this;
         _self.converterOptions = {
           antiForgeryTokenValueOrchard: this.antiforgerytokenvalueorchard
@@ -230,7 +229,7 @@
         var fileInput = this.$.fileInput;
         var textArea = this.$.wmdInput;
 
-        if (this.insertImageEnabled === "false") { return; }
+        if (this.inlineAttachmentUploadUrl === undefined || this.inlineAttachmentUploadUrl === '') { return; }
 
         if (window.chrome !== undefined) {
           // browser is google chrome
