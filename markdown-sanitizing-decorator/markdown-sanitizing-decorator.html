@@ -1,5 +1,5 @@
-﻿
-<script src="scripts/Markdown.Sanitizer.js"></script>
+<script src="scripts/Markdown.Sanitizer.js">
+</script>
 
 <!--
     markdown-sanitizing-decorator is a polymer component for sanitizing html
@@ -25,31 +25,32 @@
 -->
 
 
-<polymer-element name="markdown-sanitizing-decorator">
+<dom-module id="markdown-sanitizing-decorator">
   <template>
-    <shadow id="shadow"></shadow>
+    <content id="shadow"></content>
   </template>
-  <script>
-    Polymer('markdown-sanitizing-decorator', {
-      _converterInstance: undefined,
-      ready: function () {
-        var shadowDistributedNodes = this.$.shadow.getDistributedNodes();
-        for (var i = 0; i < shadowDistributedNodes.length; i++) {
-          var node = shadowDistributedNodes[i];
-          // *ij* subject to change but it makes sense that 
-          if (node.id === "converter" // id of the element be "converter"
-            && node._converterInstance !== undefined // element should have a _converterInstance variable
-            && window.isFunction(node._converterInstance.makeHtml) // and _converterInstance should have makeHtml function
-            ) {
-            this._converterInstance = node._converterInstance;
-            break;
-          }
-        }
-
-        if (this._converterInstance !== undefined) {
-          this._converterInstance = Markdown.sanitizeConverter(this._converterInstance);
+</dom-module>
+<script>
+  Polymer({
+    is: 'markdown-sanitizing-decorator',
+    _converterInstance: undefined,
+    attached: function () {
+      var shadowDistributedNodes = Polymer.dom(this.$.shadow).getDistributedNodes();
+      for (var i = 0; i < shadowDistributedNodes.length; i++) {
+        var node = shadowDistributedNodes[i];
+        // *ij* subject to change but it makes sense that 
+        if (node.id === "converter" // id of the element be "converter"
+          && node._converterInstance !== undefined // element should have a _converterInstance variable
+          && window.isFunction(node._converterInstance.makeHtml) // and _converterInstance should have makeHtml function
+        ) {
+          this._converterInstance = node._converterInstance;
+          break;
         }
       }
-    });
-  </script>
-</polymer-element>
+
+      if (this._converterInstance !== undefined) {
+        this._converterInstance = Markdown.sanitizeConverter(this._converterInstance);
+      }
+    }
+  });
+</script>
