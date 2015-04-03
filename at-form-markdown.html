@@ -44,11 +44,11 @@
 </style>
 
 <dom-module id="at-form-markdown">
-  <template>
-    <link rel="stylesheet" href="styles/at-form-markdown.css" />
-    <link rel="stylesheet" href="styles/prettify.css" />
-    <link rel="stylesheet" href="styles/pretty-toolbar/pretty-toolbar.css" />
+  <link rel="stylesheet" href="styles/at-form-markdown.css" />
+  <link rel="stylesheet" href="styles/prettify.css" />
+  <link rel="stylesheet" href="styles/pretty-toolbar/pretty-toolbar.css" />
 
+  <template>
     <div class$="{{class}}">
       <div id="wmdBox" class="wmd-box" onload="prettyPrint()">
         <div class="wmd-innerbox">
@@ -69,9 +69,7 @@
         </div>
       </div>
     </div>
-    <markdown-sanitizing-decorator id="defaultConverter">
-      <markdown-default-converter id="converter"></markdown-default-converter>
-    </markdown-sanitizing-decorator>
+
     <content id="shadow"></content>
   </template>
 </dom-module>
@@ -108,7 +106,6 @@
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
       var shadowDistributedNodes = this.$.shadow.getDistributedNodes();
       // find the converter
-      this._instanceVariables.converter = this.$.defaultConverter._converterInstance;
       this._instanceVariables.mediaPicker = undefined;
       for (var i = 0; i < shadowDistributedNodes.length; i++) {
         var node = shadowDistributedNodes[i];
@@ -123,6 +120,17 @@
           this._instanceVariables.mediaPicker = node;
         }
       }
+
+      // if desired converter was not set as textContent of the at-form-markdown 
+      // create everything programatically since declarative doesn't work in IE
+
+      var defaultConverter = document.createElement('markdown-default-converter');
+      // default converter doesn't have any configuration
+
+      var sanitizingDecorator = document.createElement('markdown-sanitizing-decorator');
+      // a converter instance of sanitizing converter needs to be set to default converter
+      sanitizingDecorator._converterInstance = defaultConverter._converterInstance;
+      this._instanceVariables.converter = sanitizingDecorator._converterInstance;
 
       var converter = this._instanceVariables.converter;
 
