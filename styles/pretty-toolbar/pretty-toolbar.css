@@ -1,140 +1,143 @@
-[class^="icon-"], [class*=" icon-"] {
-	font-family: 'icomoon';
-	speak: none;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-
-	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+[class^="icon-"],
+[class*=" icon-"] {
+  font-family: 'icomoon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .icon-close:before {
-	content: "\f00d";
+  content: "\f00d";
 }
 
 .icon-repeat:before {
-	content: "\f01e";
+  content: "\f01e";
 }
 
 .icon-refresh:before {
-	content: "\f021";
+  content: "\f021";
 }
 
 .icon-bold:before {
-	content: "\f032";
+  content: "\f032";
 }
 
 .icon-italic:before {
-	content: "\f033";
+  content: "\f033";
 }
 
 .icon-indent:before {
-	content: "\f03c";
+  content: "\f03c";
 }
 
 .icon-image:before {
-	content: "\f03e";
+  content: "\f03e";
 }
 
 .icon-pencil:before {
-	content: "\f040";
+  content: "\f040";
 }
 
 .icon-mail-forward:before {
-	content: "\f064";
+  content: "\f064";
 }
 
 .icon-compress:before {
-	content: "\f066";
+  content: "\f066";
 }
 
 .icon-eye:before {
-	content: "\f06e";
+  content: "\f06e";
 }
 
 .icon-eye-slash:before {
-	content: "\f070";
+  content: "\f070";
 }
 
 .icon-arrows-alt:before {
-	content: "\f0b2";
+  content: "\f0b2";
 }
 
 .icon-chain:before {
-	content: "\f0c1";
+  content: "\f0c1";
 }
 
 .icon-list-ul:before {
-	content: "\f0ca";
+  content: "\f0ca";
 }
 
 .icon-list-ol:before {
-	content: "\f0cb";
+  content: "\f0cb";
 }
 
 .icon-rotate-left:before {
-	content: "\f0e2";
+  content: "\f0e2";
 }
 
 .icon-comment-o:before {
-	content: "\f0e5";
+  content: "\f0e5";
 }
 
 .icon-angle-right:before {
-	content: "\f105";
+  content: "\f105";
 }
 
 .icon-quote-left:before {
-	content: "\f10d";
+  content: "\f10d";
 }
 
 .icon-quote-right:before {
-	content: "\f10e";
+  content: "\f10e";
 }
 
 .icon-mail-reply:before {
-	content: "\f112";
+  content: "\f112";
 }
 
 .icon-keyboard-o:before {
-	content: "\f11c";
+  content: "\f11c";
 }
 
 .icon-code:before {
-	content: "\f121";
+  content: "\f121";
 }
 
 .icon-question:before {
-	content: "\f128";
+  content: "\f128";
 }
 
 .icon-header:before {
-	content: "\f1dc";
+  content: "\f1dc";
 }
 
 .icon-toggle-off:before {
-	content: "\f204";
+  content: "\f204";
 }
 
 .icon-toggle-on:before {
-	content: "\f205";
+  content: "\f205";
 }
-
 
 .toolbar {
   list-style: none;
   margin: 0;
   padding: 0;
 }
+
 .toolbar li {
   /*position: relative;*/
+  
   display: inline-block;
   margin-right: -4px;
 }
+
 .toolbar span {
   display: block;
   background-color: #f7f7f7;
@@ -155,9 +158,181 @@
   font-size: 16px;
   text-decoration: none;
   cursor: default;
-  font-size:12px;
+  font-size: 12px;
 }
+
 .toolbar span:hover {
+  text-decoration: none;
+  color: #555;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+/* For shadow DOM */
+
+html /deep/ [class^="icon-"],
+[class*=" icon-"] {
+  font-family: 'icomoon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html /deep/ .icon-close:before {
+  content: "\f00d";
+}
+
+html /deep/ .icon-repeat:before {
+  content: "\f01e";
+}
+
+html /deep/ .icon-refresh:before {
+  content: "\f021";
+}
+
+html /deep/ .icon-bold:before {
+  content: "\f032";
+}
+
+html /deep/ .icon-italic:before {
+  content: "\f033";
+}
+
+html /deep/ .icon-indent:before {
+  content: "\f03c";
+}
+
+html /deep/ .icon-image:before {
+  content: "\f03e";
+}
+
+html /deep/ .icon-pencil:before {
+  content: "\f040";
+}
+
+html /deep/ .icon-mail-forward:before {
+  content: "\f064";
+}
+
+html /deep/ .icon-compress:before {
+  content: "\f066";
+}
+
+html /deep/ .icon-eye:before {
+  content: "\f06e";
+}
+
+html /deep/ .icon-eye-slash:before {
+  content: "\f070";
+}
+
+html /deep/ .icon-arrows-alt:before {
+  content: "\f0b2";
+}
+
+html /deep/ .icon-chain:before {
+  content: "\f0c1";
+}
+
+html /deep/ .icon-list-ul:before {
+  content: "\f0ca";
+}
+
+html /deep/ .icon-list-ol:before {
+  content: "\f0cb";
+}
+
+html /deep/ .icon-rotate-left:before {
+  content: "\f0e2";
+}
+
+html /deep/ .icon-comment-o:before {
+  content: "\f0e5";
+}
+
+html /deep/ .icon-angle-right:before {
+  content: "\f105";
+}
+
+html /deep/ .icon-quote-left:before {
+  content: "\f10d";
+}
+
+html /deep/ .icon-quote-right:before {
+  content: "\f10e";
+}
+
+html /deep/ .icon-mail-reply:before {
+  content: "\f112";
+}
+
+html /deep/ .icon-keyboard-o:before {
+  content: "\f11c";
+}
+
+html /deep/ .icon-code:before {
+  content: "\f121";
+}
+
+html /deep/ .icon-question:before {
+  content: "\f128";
+}
+
+html /deep/ .icon-header:before {
+  content: "\f1dc";
+}
+
+html /deep/ .icon-toggle-off:before {
+  content: "\f204";
+}
+
+html /deep/ .icon-toggle-on:before {
+  content: "\f205";
+}
+
+html /deep/ .toolbar {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+html /deep/ .toolbar li {
+  /*position: relative;*/
+  
+  display: inline-block;
+  margin-right: -4px;
+}
+
+html /deep/ .toolbar span {
+  display: block;
+  background-color: #f7f7f7;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#e7e7e7));
+  background-image: -webkit-linear-gradient(top, #f7f7f7, #e7e7e7);
+  background-image: -moz-linear-gradient(top, #f7f7f7, #e7e7e7);
+  background-image: -ms-linear-gradient(top, #f7f7f7, #e7e7e7);
+  background-image: -o-linear-gradient(top, #f7f7f7, #e7e7e7);
+  color: #a7a7a7;
+  margin: 8px 6px;
+  width: 22px;
+  height: 22px;
+  position: relative;
+  text-align: center;
+  line-height: 22px;
+  border-radius: 50%;
+  box-shadow: 0px 3px 8px #aaa, inset 0px 2px 3px #fff;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: default;
+  font-size: 12px;
+}
+
+html /deep/ .toolbar span:hover {
   text-decoration: none;
   color: #555;
   background: #f5f5f5;

@@ -1,1 +1,218 @@
-.pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}pre.prettyprint{padding:2px;border:1px solid #888}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+.pln {
+  color: #000
+}
+
+@media screen {
+  .str {
+    color: #080
+  }
+  .kwd {
+    color: #008
+  }
+  .com {
+    color: #800
+  }
+  .typ {
+    color: #606
+  }
+  .lit {
+    color: #066
+  }
+  .pun,
+  .opn,
+  .clo {
+    color: #660
+  }
+  .tag {
+    color: #008
+  }
+  .atn {
+    color: #606
+  }
+  .atv {
+    color: #080
+  }
+  .dec,
+  .var {
+    color: #606
+  }
+  .fun {
+    color: red
+  }
+}
+
+@media print,
+projection {
+  .str {
+    color: #060
+  }
+  .kwd {
+    color: #006;
+    font-weight: bold
+  }
+  .com {
+    color: #600;
+    font-style: italic
+  }
+  .typ {
+    color: #404;
+    font-weight: bold
+  }
+  .lit {
+    color: #044
+  }
+  .pun,
+  .opn,
+  .clo {
+    color: #440
+  }
+  .tag {
+    color: #006;
+    font-weight: bold
+  }
+  .atn {
+    color: #404
+  }
+  .atv {
+    color: #060
+  }
+}
+
+pre.prettyprint {
+  padding: 2px;
+  border: 1px solid #888
+}
+
+ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0
+}
+
+li.L0,
+li.L1,
+li.L2,
+li.L3,
+li.L5,
+li.L6,
+li.L7,
+li.L8 {
+  list-style-type: none
+}
+
+li.L1,
+li.L3,
+li.L5,
+li.L7,
+li.L9 {
+  background: #eee
+}
+/* for shadow DOM */
+
+html /deep/ .pln {
+  color: #000
+}
+
+@media screen {
+  html /deep/ .str {
+    color: #080
+  }
+  html /deep/ .kwd {
+    color: #008
+  }
+  html /deep/ .com {
+    color: #800
+  }
+  html /deep/ .typ {
+    color: #606
+  }
+  html /deep/ .lit {
+    color: #066
+  }
+  html /deep/ .pun,
+  html /deep/ .opn,
+  html /deep/ .clo {
+    color: #660
+  }
+  html /deep/ .tag {
+    color: #008
+  }
+  html /deep/ .atn {
+    color: #606
+  }
+  html /deep/ .atv {
+    color: #080
+  }
+  html /deep/ .dec,
+  html /deep/ .var {
+    color: #606
+  }
+  html /deep/ .fun {
+    color: red
+  }
+}
+
+@media print,
+projection {
+  html /deep/ .str {
+    color: #060
+  }
+  html /deep/ .kwd {
+    color: #006;
+    font-weight: bold
+  }
+  html /deep/ .com {
+    color: #600;
+    font-style: italic
+  }
+  html /deep/ .typ {
+    color: #404;
+    font-weight: bold
+  }
+  html /deep/ .lit {
+    color: #044
+  }
+  html /deep/ .pun,
+  html /deep/ .opn,
+  html /deep/ .clo {
+    color: #440
+  }
+  html /deep/ .tag {
+    color: #006;
+    font-weight: bold
+  }
+  html /deep/ .atn {
+    color: #404
+  }
+  html /deep/ .atv {
+    color: #060
+  }
+}
+
+html /deep/ pre.prettyprint {
+  padding: 2px;
+  border: 1px solid #888
+}
+
+html /deep/ ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0
+}
+
+html /deep/ li.L0,
+html /deep/ li.L1,
+html /deep/ li.L2,
+html /deep/ li.L3,
+html /deep/ li.L5,
+html /deep/ li.L6,
+html /deep/ li.L7,
+html /deep/ li.L8 {
+  list-style-type: none
+}
+
+html /deep/ li.L1,
+html /deep/ li.L3,
+html /deep/ li.L5,
+html /deep/ li.L7,
+html /deep/ li.L9 {
+  background: #eee
+}
