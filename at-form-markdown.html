@@ -54,14 +54,6 @@
       font-size: inherit;
     }
     
-    #requiredArea {
-      display: none;
-    }
-    
-    #requiredArea[invalid] {
-      display: block;
-    }
-    
     .error {
       color: red;
     }
@@ -107,13 +99,10 @@
             </div>
           </div>
         </div>
-        <div id="requiredArea">
-          <p class="error">This field is required</p>
-        </div>
         <content id="shadow"></content>
       </div>
     </div>
-    <div id="disabledOverlay"></div>
+    <div id="disabledOverlay" disabled$={{disabled}}></div>
   </template>
 </dom-module>
 <script>
@@ -148,13 +137,11 @@
       },
       disabled: {
         type: Boolean,
-        value: false,
-        observer: 'disabledChanged'
+        value: false
       },
       required: {
         type: Boolean,
-        value: false,
-        observer: 'requiredChanged'
+        value: false
       },
       valid: {
         type: Boolean,
@@ -163,6 +150,7 @@
         readOnly: true
       }
     },
+    _isReady: false,
     attached: function (event) {
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
       var shadowDistributedNodes = this.$.shadow.getDistributedNodes();
@@ -239,32 +227,27 @@
       this.$.wmdInput.addEventListener('change', function (e) {
         _self.value = _self.$.wmdInput.value;
       });
+
+      this._isReady = true;
+      this._updateValidState();
     },
     valueChanged: function (oldValue, newValue) {
-      this.$.wmdInput.value = this.value;
-      this.updateValidState();
-    },
-    disabledChanged: function () {
-      if (this.disabled) {
-        this.$.disabledOverlay.setAttribute('disabled', true);
-      } else {
-        this.$.disabledOverlay.removeAttribute('disabled');
+      if (this._isReady) {
+        this.$.wmdInput.value = this.value;
+        this.validate();
       }
     },
-    requiredChanged: function () {
-      this.updateValidState();
-    },
-    updateValidState: function () {
+    _updateValidState: function () {
       var newValue = this.required ? this.value !== undefined && this.value !== '' : true;
-
-      if (!newValue) {
-        this.$.requiredArea.setAttribute('invalid', true);
-      } else {
-        this.$.requiredArea.removeAttribute('invalid');
-      }
-
-      this.toggleClass('error', !newValue, this.$.field);
       this._setValid(newValue);
+      return newValue;
+    },
+    validate: function () {
+      var isValid = this._updateValidState();
+
+      this.toggleClass('error', !isValid, this.$.field);
+
+      return isValid;
     },
     inlineAttachmentUploadUrlChanged: function (oldValue, newValue) {
       this._initializeInlineAttachment();
@@ -321,6 +304,10 @@
       });
     },
 
+
+    /*
+     * initializes the text at the bottom of the component
+     */
     __initializeBottomText: function (event) {
       var fileInput = this.$.fileInput;
       var textArea = this.$.wmdInput;
