@@ -65,44 +65,45 @@
     #disabledOverlay[disabled] {
       display: block;
       position: absolute;
-      bottom: 0px;
-      filter: alpha(opacity 40);
-      height: expression(parentElement.scrollHeight + 'px');
+      opacity: 0.5;
       width: 100%;
       z-index: 99999;
-      height: 100%;
+    }
+    
+    #field {
+      position: absolute;
     }
   </style>
   <template>
     <at-core-theme></at-core-theme>
-    <div id="wrapper" class="ui form">
-      <div id="field" class="field">
-        <div id="labelArea">
-          <label id="label">{{label}}</label>
-        </div>
+      <div id="wrapper" class="ui form">
+        <div id="field" class="field">
+          <div id="labelArea">
+            <label id="label">{{label}}</label>
+          </div>
 
-        <div id="wmdBox" class="wmd-box" onload="prettyPrint()">
-          <div class="wmd-innerbox">
-            <div id="wmdButtonBar" class="wmd-button-bar"></div>
-            <div class="wmd-editor-box">
-              <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input"></textarea>
-              <div id="markdownBottomText">
-                <div id="chromeText" style="display: none">Attach images by dragging and dropping, <a id="chromeTextLink" href="javascript:void(0)">selecting them</a>, or pasting from the clipboard.</div>
-                <div id="nonChromeText" style="display: none">Attach images by dragging and dropping or <a id="nonChromeTextLink" href="javascript:void(0)">selecting them</a>.</div>
-                <div style="display: none">
-                  <input id="fileInput" type="file" />
+          <div id="wmdBox" class="wmd-box" onload="prettyPrint()">
+            <div class="wmd-innerbox">
+              <div id="wmdButtonBar" class="wmd-button-bar"></div>
+              <div class="wmd-editor-box">
+                <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input"></textarea>
+                <div id="markdownBottomText">
+                  <div id="chromeText" style="display: none">Attach images by dragging and dropping, <a id="chromeTextLink" href="javascript:void(0)">selecting them</a>, or pasting from the clipboard.</div>
+                  <div id="nonChromeText" style="display: none">Attach images by dragging and dropping or <a id="nonChromeTextLink" href="javascript:void(0)">selecting them</a>.</div>
+                  <div style="display: none">
+                    <input id="fileInput" type="file" />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="wmd-preview-box" style="display: none">
-              <div id="wmdPreview" class="wmd-panel wmd-preview"></div>
+              <div class="wmd-preview-box" style="display: none">
+                <div id="wmdPreview" class="wmd-panel wmd-preview"></div>
+              </div>
             </div>
           </div>
+          <content id="shadow"></content>
         </div>
-        <content id="shadow"></content>
-      </div>
-    </div>
-    <div id="disabledOverlay" disabled$={{disabled}}></div>
+        <div id="disabledOverlay"></div>
+      </div>      
   </template>
 </dom-module>
 <script>
@@ -137,7 +138,8 @@
       },
       disabled: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: 'disabledChanged'
       },
       required: {
         type: Boolean,
@@ -151,6 +153,7 @@
       }
     },
     _isReady: false,
+    _scopeCssViaAttr: true,
     ready: function (event) {
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
       var shadowDistributedNodes = this.$.shadow.getDistributedNodes();
@@ -248,6 +251,15 @@
       this.toggleClass('error', !isValid, this.$.field);
 
       return isValid;
+    },
+    disabledChanged: function (newValue, oldValue) {
+      if (this.disabled) {
+        this.$.disabledOverlay.setAttribute('disabled', true);
+//        this.$.disabledOverlay.style.top = this.$.wrapper.getBoundingClientRect().top + 'px';
+        this.$.disabledOverlay.style.height = this.$.field.getBoundingClientRect().height + 'px';
+      } else {
+        this.$.disabledOverlay.removeAttribute('disabled');
+      }
     },
     inlineAttachmentUploadUrlChanged: function (oldValue, newValue) {
       this._initializeInlineAttachment();
