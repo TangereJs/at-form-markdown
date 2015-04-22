@@ -76,34 +76,34 @@
   </style>
   <template>
     <at-core-theme></at-core-theme>
-      <div id="wrapper" class="ui form">
-        <div id="field" class="field">
-          <div id="labelArea">
-            <label id="label">{{label}}</label>
-          </div>
+    <div id="wrapper" class="ui form">
+      <div id="field" class="field">
+        <div id="labelArea">
+          <label id="label">{{label}}</label>
+        </div>
 
-          <div id="wmdBox" class="wmd-box" onload="prettyPrint()">
-            <div class="wmd-innerbox">
-              <div id="wmdButtonBar" class="wmd-button-bar"></div>
-              <div class="wmd-editor-box">
-                <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input"></textarea>
-                <div id="markdownBottomText">
-                  <div id="chromeText" style="display: none">Attach images by dragging and dropping, <a id="chromeTextLink" href="javascript:void(0)">selecting them</a>, or pasting from the clipboard.</div>
-                  <div id="nonChromeText" style="display: none">Attach images by dragging and dropping or <a id="nonChromeTextLink" href="javascript:void(0)">selecting them</a>.</div>
-                  <div style="display: none">
-                    <input id="fileInput" type="file" />
-                  </div>
+        <div id="wmdBox" class="wmd-box" onload="prettyPrint()">
+          <div class="wmd-innerbox">
+            <div id="wmdButtonBar" class="wmd-button-bar"></div>
+            <div class="wmd-editor-box">
+              <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input"></textarea>
+              <div id="markdownBottomText">
+                <div id="chromeText" style="display: none">Attach images by dragging and dropping, <a id="chromeTextLink" href="javascript:void(0)">selecting them</a>, or pasting from the clipboard.</div>
+                <div id="nonChromeText" style="display: none">Attach images by dragging and dropping or <a id="nonChromeTextLink" href="javascript:void(0)">selecting them</a>.</div>
+                <div style="display: none">
+                  <input id="fileInput" type="file" />
                 </div>
               </div>
-              <div class="wmd-preview-box" style="display: none">
-                <div id="wmdPreview" class="wmd-panel wmd-preview"></div>
-              </div>
+            </div>
+            <div class="wmd-preview-box" style="display: none">
+              <div id="wmdPreview" class="wmd-panel wmd-preview"></div>
             </div>
           </div>
-          <content id="shadow"></content>
         </div>
-        <div id="disabledOverlay"></div>
-      </div>      
+        <content id="shadow"></content>
+      </div>
+      <div id="disabledOverlay"></div>
+    </div>
   </template>
 </dom-module>
 <script>
@@ -255,10 +255,12 @@
     disabledChanged: function (newValue, oldValue) {
       if (this.disabled) {
         this.$.disabledOverlay.setAttribute('disabled', true);
-//        this.$.disabledOverlay.style.top = this.$.wrapper.getBoundingClientRect().top + 'px';
+        //        this.$.disabledOverlay.style.top = this.$.wrapper.getBoundingClientRect().top + 'px';
         this.$.disabledOverlay.style.height = this.$.field.getBoundingClientRect().height + 'px';
+        this.$.wmdBox.style.opacity = 0.5;
       } else {
         this.$.disabledOverlay.removeAttribute('disabled');
+        this.$.wmdBox.style.opacity = 1;
       }
     },
     inlineAttachmentUploadUrlChanged: function (oldValue, newValue) {
