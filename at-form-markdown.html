@@ -258,9 +258,13 @@
         //        this.$.disabledOverlay.style.top = this.$.wrapper.getBoundingClientRect().top + 'px';
         this.$.disabledOverlay.style.height = this.$.field.getBoundingClientRect().height + 'px';
         this.$.wmdBox.style.opacity = 0.5;
+        
+        this.toggleClass('error', false, this.$.field);
       } else {
         this.$.disabledOverlay.removeAttribute('disabled');
         this.$.wmdBox.style.opacity = 1;
+        
+        this.toggleClass('error', !this.valid, this.$.field);
       }
     },
     inlineAttachmentUploadUrlChanged: function (oldValue, newValue) {
