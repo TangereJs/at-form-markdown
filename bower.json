@@ -3,6 +3,6 @@
   "private": true,
   "dependencies": {
     "polymer": "Polymer/polymer#0.8-preview",
-    "marked-element": "Polymer/marked-element#0.8-preview"
+    "marked-element": "PolymerElements/marked-element#master"
   }
 }
