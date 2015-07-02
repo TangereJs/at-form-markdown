@@ -4,14 +4,24 @@
 <head>
   <meta charset="UTF-8">
   <title></title>
-  <script src="../webcomponentsjs/webcomponents.js"></script>
-  <link rel="import" href="../polymer/polymer.html" />
-  <link rel="import" href="at-form-markdown.html" />
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../polymer/polymer.html">
+  <link rel="import" href="../layout/layout.html">
+  <link rel="import" href="at-form-markdown.html">
 </head>
 
 <body>
-  <at-form-markdown id="afMarkdown"></at-form-markdown>
-
+  <div class="vertical layout">
+    <div class="horizontal layout">
+      <at-form-markdown id="afMarkdown"></at-form-markdown>
+    </div>
+    <div class="horizontal layout">
+      <at-form-markdown id="afMarkdownRequired" required="true"></at-form-markdown>
+    </div>
+    <div class="horizontal layout">
+      <at-form-markdown id="afMarkdownDisabled" disabled="true"></at-form-markdown>
+    </div>
+  </div>
   <script>
     document.addEventListener('WebComponentsReady', function (e) {
       var markdown = document.getElementById('afMarkdown');
