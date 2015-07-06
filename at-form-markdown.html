@@ -146,7 +146,7 @@
     _scopeCssViaAttr: true,
     ready: function(event) {
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
-      var shadowDistributedNodes = this.$.shadow.getDistributedNodes();
+      var shadowDistributedNodes = Polymer.dom(this.$.shadow).getDistributedNodes();
       // find the converter
       this._instanceVariables.mediaPicker = undefined;
       for (var i = 0; i < shadowDistributedNodes.length; i++) {
