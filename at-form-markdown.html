@@ -53,26 +53,18 @@
       font-weight: bold;
       font-size: inherit;
     }
-    
+
     .error {
       color: red;
     }
-    
-    #disabledOverlay {
-      display: none;
+
+    #wmdButtonBar[disabled] {
+      pointer-events: none;
     }
-    
-    #disabledOverlay[disabled] {
-      display: block;
-      position: absolute;
-      opacity: 0.5;
-      width: 100%;
-      z-index: 99999;
+    #wmdInput[disabled] {
+      pointer-events: none;
     }
-    
-    #field {
-      position: absolute;
-    }
+
   </style>
   <template>
     <at-core-theme></at-core-theme>
@@ -81,7 +73,6 @@
         <div id="labelArea">
           <label id="label">{{label}}</label>
         </div>
-
         <div id="wmdBox" class="wmd-box" onload="prettyPrint()">
           <div class="wmd-innerbox">
             <div id="wmdButtonBar" class="wmd-button-bar"></div>
@@ -102,13 +93,12 @@
         </div>
         <content id="shadow"></content>
       </div>
-      <div id="disabledOverlay"></div>
     </div>
   </template>
 </dom-module>
 <script>
-  window.isFunction = function (obj) {
-    return obj !== undefined && Object.prototype.toString(obj) === Object.prototype.toString(function () {});
+  window.isFunction = function(obj) {
+    return obj !== undefined && Object.prototype.toString(obj) === Object.prototype.toString(function() {});
   }
 
   Polymer({
@@ -154,7 +144,7 @@
     },
     _isReady: false,
     _scopeCssViaAttr: true,
-    ready: function (event) {
+    ready: function(event) {
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
       var shadowDistributedNodes = this.$.shadow.getDistributedNodes();
       // find the converter
@@ -173,7 +163,7 @@
         }
       }
 
-      // if desired converter was not set as textContent of the at-form-markdown 
+      // if desired converter was not set as textContent of the at-form-markdown
       // create everything programatically since declarative doesn't work in IE
 
       var defaultConverter = document.createElement('markdown-default-converter');
@@ -200,7 +190,7 @@
       };
 
       var editor = new Markdown.Editor(converter, {
-        handler: function () {
+        handler: function() {
           window.open("http://daringfireball.net/projects/markdown/syntax");
         }
       }, panelsCollection, this.shadowRoot || this.shadyRoot);
@@ -227,63 +217,63 @@
 
       // 10) attach to wmdInput chage event to update component value
       var _self = this;
-      this.$.wmdInput.addEventListener('change', function (e) {
+      this.$.wmdInput.addEventListener('change', function(e) {
         _self.value = _self.$.wmdInput.value;
       });
 
       this._isReady = true;
       this._updateValidState();
     },
-    valueChanged: function (oldValue, newValue) {
+    valueChanged: function(oldValue, newValue) {
       if (this._isReady) {
         this.$.wmdInput.value = this.value;
         this.validate();
       }
     },
-    _updateValidState: function () {
+    _updateValidState: function() {
       var newValue = this.required ? this.value !== undefined && this.value !== '' : true;
       this._setValid(newValue);
       return newValue;
     },
-    validate: function () {
+    validate: function() {
       var isValid = this._updateValidState();
 
       this.toggleClass('error', !isValid, this.$.field);
 
       return isValid;
     },
-    disabledChanged: function (newValue, oldValue) {
+    disabledChanged: function(newValue, oldValue) {
       if (this.disabled) {
-        this.$.disabledOverlay.setAttribute('disabled', true);
-        //        this.$.disabledOverlay.style.top = this.$.wrapper.getBoundingClientRect().top + 'px';
-        this.$.disabledOverlay.style.height = this.$.field.getBoundingClientRect().height + 'px';
-        this.$.wmdBox.style.opacity = 0.5;
-        
+        this.$.wmdButtonBar.setAttribute('disabled', 'true');
+        this.$.wmdInput.setAttribute('disabled', 'true');
+        this.$.wmdInput.setAttribute('tabIndex', -1);
+
         this.toggleClass('error', false, this.$.field);
       } else {
-        this.$.disabledOverlay.removeAttribute('disabled');
-        this.$.wmdBox.style.opacity = 1;
-        
-        var isValid = this._updateValidState();        
+        this.$.wmdButtonBar.removeAttribute('disabled');
+        this.$.wmdInput.removeAttribute('disabled');
+        this.$.wmdInput.removeAttribute('tabIndex');
+
+        var isValid = this._updateValidState();
         this.toggleClass('error', !isValid, this.$.field);
       }
     },
-    inlineAttachmentUploadUrlChanged: function (oldValue, newValue) {
+    inlineAttachmentUploadUrlChanged: function(oldValue, newValue) {
       this._initializeInlineAttachment();
       this.__initializeBottomText();
       this._inlineAttachmentInstance.settings.uploadUrl = this.inlineAttachmentUploadUrl;
     },
-    inlineAttachmentJsonFieldNameChanged: function (oldValue, newValue) {
+    inlineAttachmentJsonFieldNameChanged: function(oldValue, newValue) {
       if (this._inlineAttachmentInstance !== undefined) {
         this._inlineAttachmentInstance.settings.jsonFieldName = this.inlineAttachmentJsonFieldName;
       }
     },
-    inlineAttachmentExtraParamsChanged: function (oldValue, newValue) {
+    inlineAttachmentExtraParamsChanged: function(oldValue, newValue) {
       if (this._inlineAttachmentInstance !== undefined) {
         this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
       }
     },
-    _initializeInlineAttachment: function () {
+    _initializeInlineAttachment: function() {
       if (this.inlineAttachmentUploadUrl === undefined || this.inlineAttachmentUploadUrl === '') {
         return;
       }
@@ -292,7 +282,7 @@
       this._inlineAttachmentInstance = inlineAttachment.editors.input.attachToInput(this.$.wmdInput, {
         uploadUrl: this.inlineAttachmentUploadUrl,
         jsonFieldName: this.inlineAttachmentJsonFieldName,
-        onFileUploadResponse: function (xhr) {
+        onFileUploadResponse: function(xhr) {
           var result = JSON.parse(xhr.responseText),
             filename = result[0][this.settings.jsonFieldName];
 
@@ -309,7 +299,7 @@
 
           return true;
         },
-        setupFormData: function (formData, file) {
+        setupFormData: function(formData, file) {
           // *ij* here "this" is the inline-attachment settings object
           var originalName = this.originalName;
           if (file.name != undefined && file.name.indexOf(".") > -1) {
@@ -327,7 +317,7 @@
     /*
      * initializes the text at the bottom of the component
      */
-    __initializeBottomText: function (event) {
+    __initializeBottomText: function(event) {
       var fileInput = this.$.fileInput;
       var textArea = this.$.wmdInput;
 
@@ -340,7 +330,7 @@
         var chromeText = this.$.chromeText;
         chromeText.style.display = "block";
         var chromeTextLink = this.$.chromeTextLink;
-        chromeTextLink.addEventListener('click', function (e) {
+        chromeTextLink.addEventListener('click', function(e) {
           fileInput.click();
           e.preventDefault();
         }, false);
@@ -349,13 +339,13 @@
         var nonChromeText = this.$.nonChromeText;
         nonChromeText.style.display = "block";
         var nonChromeTextLink = this.$.nonChromeTextLink;
-        nonChromeTextLink.addEventListener('click', function (e) {
+        nonChromeTextLink.addEventListener('click', function(e) {
           fileInput.click();
           e.preventDefault();
         }, false);
       }
 
-      fileInput.addEventListener('change', function (e) {
+      fileInput.addEventListener('change', function(e) {
         e.preventDefault();
         var dropEvent = document.createEvent('Event');
         dropEvent.initEvent('drop', true, true);

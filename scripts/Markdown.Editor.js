@@ -1,6 +1,7 @@
 // needs Markdown.Converter.js at the moment
 
 (function (Polymer) {
+  'use strict';
 
   if (Polymer === undefined) {
     console.error('Markdown.Editor.js requires Polymer');
@@ -11,7 +12,6 @@
     position = {},
     ui = {},
     doc = window.document,
-    _shadowRoot,
     re = window.RegExp,
     nav = window.navigator,
     SETTINGS = {
@@ -102,7 +102,7 @@
   // - refreshPreview() forces the preview to be updated. This method is only available after run() was called.
   Markdown.Editor = function (markdownConverter, options, panelCollection, shadowRoot) {
 
-    _shadowRoot = shadowRoot;
+    this._shadowRoot = shadowRoot;
 
     options = options || {};
 
@@ -143,7 +143,7 @@
       var previewManager = new PreviewManager(markdownConverter, panels, function () {
         hooks.onPreviewRefresh();
       });
-      var commandManager = new CommandManager(hooks, getString, previewManager);
+      var commandManager = new CommandManager(hooks, getString, previewManager, this._shadowRoot);
       var undoManager, uiManager;
 
       if (!/\?noundo/.test(doc.location.href)) {
@@ -151,7 +151,7 @@
           previewManager.refresh();
           if (uiManager) // not available on the first call
             uiManager.setUndoRedoButtonStates();
-        }, panels);
+        }, panels, this._shadowRoot);
         this.textOperation = function (f) {
           undoManager.setCommandMode();
           f();
@@ -159,7 +159,7 @@
         }
       }
 
-      uiManager = new UIManager(panels, undoManager, previewManager, commandManager, options.helpButton, getString);
+      uiManager = new UIManager(panels, undoManager, previewManager, commandManager, options.helpButton, getString, this._shadowRoot);
       uiManager.setUndoRedoButtonStates();
 
       var forceRefresh = that.refreshPreview = function () {
@@ -472,7 +472,7 @@
 
   // Handles pushing and popping TextareaStates for undo/redo commands.
   // I should rename the stack variables to list.
-  function UndoManager(callback, panels) {
+  function UndoManager(callback, panels, shadowRoot) {
 
     var undoObj = this;
     var undoStack = []; // A stack of undo states
@@ -499,7 +499,7 @@
     };
 
     var refreshState = function (isInitialState) {
-      inputStateObj = new TextareaState(panels, isInitialState);
+      inputStateObj = new TextareaState(panels, isInitialState, shadowRoot);
       timer = undefined;
     };
 
@@ -529,7 +529,7 @@
           lastState.restore();
           lastState = null;
         } else {
-          undoStack[stackPtr] = new TextareaState(panels);
+          undoStack[stackPtr] = new TextareaState(panels, false, shadowRoot);
           undoStack[--stackPtr].restore();
 
           if (callback) {
@@ -562,7 +562,7 @@
 
     // Push the input area state to the stack.
     var saveState = function () {
-      var currState = inputStateObj || new TextareaState(panels);
+      var currState = inputStateObj || new TextareaState(panels, false, shadowRoot);
 
       if (!currState) {
         return false;
@@ -699,16 +699,18 @@
 
   // The input textarea state/contents.
   // This is used to implement undo/redo by the undo manager.
-  function TextareaState(panels, isInitialState) {
+  function TextareaState(panels, isInitialState, shadowRoot) {
 
     // Aliases
     var stateObj = this;
     var inputArea = panels.input;
+    this._shadowRoot = shadowRoot;
+
     this.init = function () {
       if (!util.isVisible(inputArea)) {
         return;
       }
-      if (!isInitialState && _shadowRoot.activeElement && _shadowRoot.activeElement !== inputArea) { // this happens when tabbing out of the input box
+      if (!isInitialState && this._shadowRoot.activeElement && this._shadowRoot.activeElement !== inputArea) { // this happens when tabbing out of the input box
         return;
       }
 
@@ -896,7 +898,7 @@
 
       pushPreviewHtml("Loading preview ... ");
       //pushPreviewHtml(text);
-
+      
       converter.makeHtml(text, onConversionComplete);
     };
 
@@ -1079,7 +1081,7 @@
   // callback: The function which is executed when the prompt is dismissed, either via OK or Cancel.
   //      It receives a single argument; either the entered text (if OK was chosen) or null (if Cancel
   //      was chosen).
-  ui.prompt = function (text, defaultInputText, callback) {
+  ui.prompt = function (text, defaultInputText, callback, shadowRoot) {
 
     // These variables need to be declared at this level since they are used
     // in multiple functions.
@@ -1208,7 +1210,7 @@
         dialog.style.left = "50%";
       }
       //doc.body.appendChild(dialog);
-      Polymer.dom(_shadowRoot).appendChild(dialog);
+      Polymer.dom(shadowRoot).appendChild(dialog);
 
       // This has to be done AFTER adding the dialog to the form if you
       // want it to be centered.
@@ -1239,12 +1241,12 @@
     }, 0);
   };
 
-  function UIManager(panels, undoManager, previewManager, commandManager, helpOptions, getString) {
+  function UIManager(panels, undoManager, previewManager, commandManager, helpOptions, getString, shadowRoot) {
 
     var inputBox = panels.input,
       buttons = {}; // buttons.undo, buttons.link, etc. The actual DOM elements.
 
-    makeSpritedButtonRow();
+    makeSpritedButtonRow(shadowRoot);
 
     var keyEvent = "keydown";
     if (uaSniffed.isOpera) {
@@ -1350,7 +1352,7 @@
           undoManager.setCommandMode();
         }
 
-        var state = new TextareaState(panels);
+        var state = new TextareaState(panels, false, shadowRoot);
 
         if (!state) {
           return;
@@ -1574,10 +1576,10 @@
       buttons.toggleFullScreen.addEventListener('click', function (e) {
         var fullscreenButton = buttons.toggleFullScreen;
         var fullScreenButtonSpan = fullscreenButton.querySelector('span');
-        var wmdBox = Polymer.dom(_shadowRoot).querySelector('#wmdBox');
-        var wmdInnerBox = Polymer.dom(_shadowRoot).querySelector('.wmd-innerbox');
+        var wmdBox = Polymer.dom(shadowRoot).querySelector('#wmdBox');
+        var wmdInnerBox = Polymer.dom(shadowRoot).querySelector('.wmd-innerbox');
         var body = document.querySelector('body');
-        var wmdButtonBar = Polymer.dom(_shadowRoot).querySelector('#wmdButtonBar');
+        var wmdButtonBar = Polymer.dom(shadowRoot).querySelector('#wmdButtonBar');
 
         if (fullscreenButton.isFullScreenOn) {
           fullscreenButton.isFullScreenOn = false;
@@ -1618,10 +1620,11 @@
 
   }
 
-  function CommandManager(pluginHooks, getString, previewManager) {
+  function CommandManager(pluginHooks, getString, previewManager, shadowRoot) {
     this.hooks = pluginHooks;
     this.getString = getString;
     this.previewManager = previewManager;
+    this._shadowRoot = shadowRoot;
   }
 
   var commandProto = CommandManager.prototype;
@@ -1892,10 +1895,10 @@
 
       if (isImage) {
         if (!this.hooks.insertImageDialog(linkEnteredCallback)) {
-          ui.prompt(this.getString("imagedialog"), imageDefaultText, linkEnteredCallback);
+          ui.prompt(this.getString("imagedialog"), imageDefaultText, linkEnteredCallback, this._shadowRoot);
         }
       } else {
-        ui.prompt(this.getString("linkdialog"), linkDefaultText, linkEnteredCallback);
+        ui.prompt(this.getString("linkdialog"), linkDefaultText, linkEnteredCallback, this._shadowRoot);
       }
       return true;
     }

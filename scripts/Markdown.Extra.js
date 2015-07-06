@@ -1,4 +1,5 @@
 (function (Markdown) {
+  'use strict';
   // A quick way to make sure we're only keeping span-level tags when we need to.
   // This isn't supposed to be foolproof. It's just a quick way to make sure we
   // keep all span-level tags returned by a pagedown converter. It should allow
@@ -576,7 +577,7 @@
       code = code.replace(/&/g, "&amp;");
       code = code.replace(/</g, "&lt;");
       code = code.replace(/>/g, "&gt;");
-      // These were escaped by PageDown before postNormalization 
+      // These were escaped by PageDown before postNormalization
       code = code.replace(/~D/g, "$$");
       code = code.replace(/~T/g, "~");
       return code;
@@ -871,4 +872,3 @@
   };
 
 })(window.Markdown = window.Markdown || {});
-

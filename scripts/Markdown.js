@@ -1,10 +1,10 @@
-; 'use strict';
 
-// *ij* markdown is namespace for markdown functions and objects 
+// *ij* markdown is namespace for markdown functions and objects
 // window.markdown object/namespace is initialized in this file
 
 (function (Markdown) {
-
+  'use strict';
+  
   // autogrow function adjusts the size of the text area to match the size of the content
   Markdown.autoGrow = function (textarea) {
     textarea.oninput = function () {

@@ -14,7 +14,7 @@
 
     @why is this this way?
         * using marked-element directly in af-form-markdown sounds like a good idea, right? well, it only sounds
-        * There are three major obstacles - styling passing text to it and using it only when remote converter is not used. 
+        * There are three major obstacles - styling passing text to it and using it only when remote converter is not used.
           Turns satisfying all three conditions is very hard so I decided to put it here in place of old orchard.markdown code.
           putting it here makes sense and it works well
 -->
@@ -28,6 +28,7 @@
   (function (Markdown) {
     Polymer({
       is: "markdown-default-converter",
+      _scopeCssViaAttr: true,
       _converterInstance: undefined,
       ready: function () {
         this._converterInstance = this;
@@ -35,7 +36,7 @@
       },
       makeHtml: function (text, conversionCompletedCallback) {
         var _self = this;
-        this.$.markedElement.text = text;
+        this.$.markedElement.renderAsService(text);
         setTimeout(function (e) {
           conversionCompletedCallback(_self.$.markedElement.$.content.innerHTML);
         }, 100);
