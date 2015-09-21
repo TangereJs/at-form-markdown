@@ -1045,7 +1045,9 @@
     var background = doc.createElement("div"),
       style = background.style;
 
-    background.className = "wmd-prompt-background";
+    //background.className = "wmd-prompt-background";
+    background.classList.add("wmd-prompt-background");
+    background.setAttribute('style-scope', 'at-form-markdown');
 
     style.position = "absolute";
     style.top = "0";
@@ -1136,7 +1138,9 @@
 
       // The main dialog box.
       dialog = doc.createElement("div");
-      dialog.className = "wmd-prompt-dialog";
+      dialog.classList.add('wmd-prompt-dialog');
+      dialog.setAttribute('style-scope', 'at-form-markdown');
+      //dialog.className = "wmd-prompt-dialog";
       dialog.style.padding = "10px;";
       dialog.style.position = "fixed";
       dialog.style.width = "400px";
@@ -1144,6 +1148,7 @@
 
       // The dialog text.
       var question = doc.createElement("div");
+      question.setAttribute('style-scope', 'at-form-markdown');
       question.innerHTML = text;
       question.style.padding = "5px";
       dialog.appendChild(question);
@@ -1164,6 +1169,7 @@
 
       // The input text box
       input = doc.createElement("input");
+      input.setAttribute('style-scope', 'at-form-markdown');
       input.type = "text";
       input.value = defaultInputText;
       style = input.style;
@@ -1174,6 +1180,7 @@
 
       // The ok button
       var okButton = doc.createElement("input");
+      okButton.setAttribute('style-scope', 'at-form-markdown');
       okButton.type = "button";
       okButton.onclick = function () {
         return close(false);
@@ -1463,6 +1470,7 @@
       var highlightYShift = "-40px";
 
       var buttonRow = document.createElement("ul");
+      buttonRow.setAttribute('style-scope', 'at-form-markdown');
       buttonRow.id = "wmd-button-row";
       buttonRow.className = 'toolbar'; //buttonRow.className = 'wmd-button-row';
       buttonRow.style.display = "inline-block";
@@ -1471,10 +1479,12 @@
       var xPosition = 0;
       var makeButton = function (id, title, XShift, textOp, cssClassName, buttonRowToAddButtonTo) {
         var button = document.createElement("li");
+        button.setAttribute('style-scope', 'at-form-markdown');
         //button.className = "wmd-button";
         button.style.left = xPosition + "px";
         xPosition += 25;
         var buttonImage = document.createElement("span");
+        buttonImage.setAttribute('style-scope', 'at-form-markdown');
         buttonImage.classList.add(cssClassName); // added this line
         button.id = id;
         button.appendChild(buttonImage);
@@ -1488,6 +1498,7 @@
       };
       var makeSpacer = function (num) {
         var spacer = document.createElement("li");
+        spacer.setAttribute('style-scope', 'at-form-markdown');
         spacer.className = "wmd-spacer wmd-spacer" + num;
         spacer.id = "wmd-spacer" + num;
         buttonRow.appendChild(spacer);
@@ -1535,7 +1546,9 @@
 
       if (helpOptions) {
         var helpButton = document.createElement("li");
+        helpButton.setAttribute('style-scope', 'at-form-markdown');
         var helpButtonImage = document.createElement("span");
+        helpButtonImage.setAttribute('style-scope', 'at-form-markdown');
         helpButtonImage.classList.add("icon-question"); // i added this
         helpButton.appendChild(helpButtonImage);
         //helpButton.className = "wmd-button wmd-help-button";
@@ -1553,6 +1566,7 @@
 
       // create buttons for preview
       var previewButtonRow = document.createElement("ul");
+      previewButtonRow.setAttribute('style-scope', 'at-form-markdown');
       previewButtonRow.id = "wmd-preview-button-row";
       previewButtonRow.className = 'toolbar'; //buttonRow.className = 'wmd-button-row';
       previewButtonRow = buttonBar.appendChild(previewButtonRow);
@@ -1566,6 +1580,7 @@
 
       // for fullscreen and stuff
       var serviceButtonRow = document.createElement("ul");
+      serviceButtonRow.setAttribute('style-scope', 'at-form-markdown');
       serviceButtonRow.id = "wmd-service-button-row";
       serviceButtonRow.className = 'toolbar'; //buttonRow.className = 'wmd-button-row';
       serviceButtonRow.style.display = "inline-block";
