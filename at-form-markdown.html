@@ -61,16 +61,20 @@
     #wmdButtonBar[disabled] {
       pointer-events: none;
     }
+
     #wmdInput[disabled] {
       pointer-events: none;
     }
 
+    .hide-label {
+      display: none;
+    }
   </style>
   <template>
     <at-core-theme></at-core-theme>
     <div id="wrapper" class="ui form">
       <div id="field" class="field">
-        <div id="labelArea">
+        <div id="labelContainer">
           <label id="label">{{label}}</label>
         </div>
         <div id="wmdBox" class="wmd-box" onload="prettyPrint()">
@@ -140,10 +144,22 @@
         value: true,
         notify: true,
         readOnly: true
+      },
+      label: {
+        type: String,
+        value: ''
+      },
+      hideTitle: {
+        type: Boolean,
+        value: false,
+        observer: 'hideTitleChanged'
       }
     },
     _isReady: false,
     _scopeCssViaAttr: true,
+    hideTitleChanged: function(newValue, oldValue) {
+      this.toggleClass("hide-label", newValue, this.$.labelContainer);
+    },
     ready: function(event) {
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
       var shadowDistributedNodes = Polymer.dom(this.$.shadow).getDistributedNodes();
