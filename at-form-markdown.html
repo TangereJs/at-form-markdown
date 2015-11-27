@@ -101,6 +101,8 @@
   </template>
 </dom-module>
 <script>
+  "use strict";
+
   window.isFunction = function(obj) {
     return obj !== undefined && Object.prototype.toString(obj) === Object.prototype.toString(function() {});
   }
@@ -120,15 +122,20 @@
       },
       inlineAttachmentExtraParams: {
         type: Object,
-        value: {}
+        value: function () {
+          return {};
+        },
+        observer: 'inlineAttachmentExtraParamsChanged'
       },
       inlineAttachmentUploadUrl: {
         type: String,
-        value: ''
+        value: '',
+        observer: 'inlineAttachmentUploadUrlChanged'
       },
       inlineAttachmentJsonFieldName: {
         type: String,
-        value: ''
+        value: '',
+        observer: 'inlineAttachmentJsonFieldNameChanged'
       },
       disabled: {
         type: Boolean,
@@ -280,16 +287,19 @@
       }
     },
     inlineAttachmentUploadUrlChanged: function(oldValue, newValue) {
+      if (!this._isReady) {return;}
       this._initializeInlineAttachment();
       this.__initializeBottomText();
       this._inlineAttachmentInstance.settings.uploadUrl = this.inlineAttachmentUploadUrl;
     },
     inlineAttachmentJsonFieldNameChanged: function(oldValue, newValue) {
+      if (!this._isReady) {return;}
       if (this._inlineAttachmentInstance !== undefined) {
         this._inlineAttachmentInstance.settings.jsonFieldName = this.inlineAttachmentJsonFieldName;
       }
     },
     inlineAttachmentExtraParamsChanged: function(oldValue, newValue) {
+      if (!this._isReady) {return;}
       if (this._inlineAttachmentInstance !== undefined) {
         this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
       }
@@ -343,6 +353,13 @@
       var textArea = this.$.wmdInput;
 
       if (this.inlineAttachmentUploadUrl === undefined || this.inlineAttachmentUploadUrl === '') {
+        if (window.chrome !== undefined) {
+          var chromeText1 = this.$.chromeText;
+          chromeText1.style.display = "none";
+        } else {
+          var nonChromeText1 = this.$.nonChromeText;
+          nonChromeText1.style.display = "none";
+        }
         return;
       }
 
