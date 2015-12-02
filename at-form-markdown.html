@@ -11,7 +11,7 @@
 
 <!--
     at-form-markdown is a polymer component for markdown markup
-    @attributes
+    @properties
       inlineAttachmentUploadUrl - url for uploading meda (eg. images)
       inlineAttachmentJsonFieldName - the name of the field in response which contains the filenanme of the uploaded file
       inlineAttachmentExtraParams - extra parameters that will be sent with each request in request body
@@ -66,7 +66,7 @@
       pointer-events: none;
     }
 
-    .hide-label {
+    .hidden {
       display: none;
     }
   </style>
@@ -160,6 +160,17 @@
         type: Boolean,
         value: false,
         observer: 'hideLabelChanged'
+      },
+      /**
+       * Hides the element. When hidden nothing is displayed for the element
+       * @property hide
+       * @type Boolean
+       * @default false
+       */
+      hide: {
+        type: Boolean,
+        value: false,
+        observer: 'hideChanged'
       }
     },
     $meta: [{
@@ -169,8 +180,12 @@
     }],
     _isReady: false,
     _scopeCssViaAttr: true,
+    hideChanged: function (newValue, oldValue) {
+      var wrapper = this.$.wrapper;
+      this.toggleClass('hidden', newValue, wrapper);
+    },
     hideLabelChanged: function(newValue, oldValue) {
-      this.toggleClass("hide-label", newValue, this.$.labelContainer);
+      this.toggleClass("hidden", newValue, this.$.labelContainer);
     },
     ready: function(event) {
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
