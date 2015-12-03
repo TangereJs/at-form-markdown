@@ -2,7 +2,7 @@
   "name": "at-form-markdown",
   "private": true,
   "dependencies": {
-    "polymer": "Polymer/polymer#0.8-preview",
-    "marked-element": "TangereJs/marked-element#0.8-preview"
+    "polymer": "Polymer/polymer#master",
+    "at-core-markdown": "TangereJs/at-core-markdown#0.8-preview"
   }
 }
