@@ -804,6 +804,10 @@
 
       if (stateObj.text != undefined && stateObj.text != inputArea.value) {
         inputArea.value = stateObj.text;
+
+        var changeEvent = document.createEvent('event');
+        changeEvent.initEvent('change', false, false);
+        inputArea.dispatchEvent(changeEvent);
       }
       this.setInputAreaSelection();
       inputArea.scrollTop = stateObj.scrollTop;
@@ -898,7 +902,7 @@
 
       pushPreviewHtml("Loading preview ... ");
       //pushPreviewHtml(text);
-      
+
       converter.makeHtml(text, onConversionComplete);
     };
 
