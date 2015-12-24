@@ -8,7 +8,7 @@
 <link rel="import" href="markdown-default-converter.html" />
 <link rel="import" href="markdown-sanitizing-decorator/markdown-sanitizing-decorator.html" />
 <link rel="import" href="../at-core-theme/at-core-theme.html" />
-
+<link rel="import" href="../at-form-behaviors/at-form-behaviors-validation.html">
 <!--
     at-form-markdown is a polymer component for markdown markup
     @properties
@@ -54,9 +54,6 @@
       font-size: inherit;
     }
 
-    .error {
-      color: red;
-    }
 
     #wmdButtonBar[disabled] {
       pointer-events: none;
@@ -64,6 +61,16 @@
 
     #wmdInput[disabled] {
       pointer-events: none;
+    }
+
+    --error-color: #e41e2b;
+
+    .error {
+      color: var(--error-color);
+    }
+
+    .hint-container.error > p {
+      color: var(--error-color);
     }
 
     .hidden {
@@ -98,17 +105,21 @@
         <content id="shadow"></content>
       </div>
     </div>
+    <div id="hintContainer" class="hint-container">
+      <p id="errorHtml" class="hint"></p>
+    </div>
   </template>
 </dom-module>
 <script>
   "use strict";
 
   window.isFunction = function(obj) {
-    return obj !== undefined && Object.prototype.toString(obj) === Object.prototype.toString(function() {});
+    return Object.prototype.toString.call(obj) === "[Object Function]";
   }
 
   Polymer({
     is: 'at-form-markdown',
+    behaviors: [AtFormBehaviors.AtFormBehaviorsValidation],
     _instanceVariables: {
       converter: undefined,
       mediaPicker: undefined
@@ -123,7 +134,7 @@
       },
       inlineAttachmentExtraParams: {
         type: Object,
-        value: function () {
+        value: function() {
           return {};
         },
         observer: 'inlineAttachmentExtraParamsChanged'
@@ -145,13 +156,8 @@
       },
       required: {
         type: Boolean,
-        value: false
-      },
-      valid: {
-        type: Boolean,
-        value: true,
-        notify: true,
-        readOnly: true
+        value: false,
+        observer: 'requiredChanged'
       },
       label: {
         type: String,
@@ -179,16 +185,19 @@
       type: "string",
       xtype: "marked"
     }],
-    _isReady: false,
     _scopeCssViaAttr: true,
-    hideChanged: function (newValue, oldValue) {
+    hideChanged: function(newValue, oldValue) {
       var wrapper = this.$.wrapper;
       this.toggleClass('hidden', newValue, wrapper);
+      if (this._isReady) {
+        this.validate();
+      }
     },
     hideLabelChanged: function(newValue, oldValue) {
       this.toggleClass("hidden", newValue, this.$.labelContainer);
     },
     ready: function(event) {
+      this._isReady = false;
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
       var shadowDistributedNodes = Polymer.dom(this.$.shadow).getDistributedNodes();
       // find the converter
@@ -266,7 +275,6 @@
       });
 
       this._isReady = true;
-      this._updateValidState();
     },
     valueChanged: function(oldValue, newValue) {
       if (this._isReady) {
@@ -274,48 +282,49 @@
         this.validate();
       }
     },
-    _updateValidState: function() {
-      var newValue = this.required ? this.value !== undefined && this.value !== '' : true;
-      this._setValid(newValue);
-      return newValue;
-    },
-    validate: function() {
-      var isValid = this._updateValidState();
-
+    _updateUIValidState: function(isValid) {
       this.toggleClass('error', !isValid, this.$.field);
-
-      return isValid;
+      this.toggleClass('error', !isValid, this.$.hintContainer);
     },
     disabledChanged: function(newValue, oldValue) {
       if (this.disabled) {
         this.$.wmdButtonBar.setAttribute('disabled', 'true');
         this.$.wmdInput.setAttribute('disabled', 'true');
         this.$.wmdInput.setAttribute('tabIndex', -1);
-
-        this.toggleClass('error', false, this.$.field);
       } else {
         this.$.wmdButtonBar.removeAttribute('disabled');
         this.$.wmdInput.removeAttribute('disabled');
         this.$.wmdInput.removeAttribute('tabIndex');
-
-        var isValid = this._updateValidState();
-        this.toggleClass('error', !isValid, this.$.field);
+      }
+      if (this._isReady) {
+        this.validate();
+      }
+    },
+    requiredChanged: function (newValue, oldValue) {
+      if (this._isReady) {
+        this.validate();
       }
     },
     inlineAttachmentUploadUrlChanged: function(oldValue, newValue) {
-      if (!this._isReady) {return;}
+      if (!this._isReady) {
+        return;
+      }
       this._initializeInlineAttachment();
       this.__initializeBottomText();
       this._inlineAttachmentInstance.settings.uploadUrl = this.inlineAttachmentUploadUrl;
     },
     inlineAttachmentJsonFieldNameChanged: function(oldValue, newValue) {
-      if (!this._isReady) {return;}
+      if (!this._isReady) {
+        return;
+      }
       if (this._inlineAttachmentInstance !== undefined) {
         this._inlineAttachmentInstance.settings.jsonFieldName = this.inlineAttachmentJsonFieldName;
       }
     },
     inlineAttachmentExtraParamsChanged: function(oldValue, newValue) {
-      if (!this._isReady) {return;}
+      if (!this._isReady) {
+        return;
+      }
       if (this._inlineAttachmentInstance !== undefined) {
         this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
       }

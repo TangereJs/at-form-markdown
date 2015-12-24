@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "polymer": "Polymer/polymer#master",
-    "at-core-markdown": "TangereJs/at-core-markdown#0.8-preview"
+    "at-core-markdown": "TangereJs/at-core-markdown#0.8-preview",
+    "at-form-behaviors": "TangereJs/at-form-behaviors#0.8-preview"
   }
 }
