@@ -9,6 +9,7 @@
 <link rel="import" href="markdown-sanitizing-decorator/markdown-sanitizing-decorator.html" />
 <link rel="import" href="../at-core-theme/at-core-theme.html" />
 <link rel="import" href="../at-form-behaviors/at-form-behaviors-validation.html">
+<link rel="import" href="../at-theme/at-theme.html">
 <!--
     at-form-markdown is a polymer component for markdown markup
     @properties
@@ -54,7 +55,6 @@
       font-size: inherit;
     }
 
-
     #wmdButtonBar[disabled] {
       pointer-events: none;
     }
@@ -63,18 +63,24 @@
       pointer-events: none;
     }
 
-    --error-color: #e41e2b;
-
-    .error {
-      color: var(--error-color);
-    }
-
-    .hint-container.error > p {
-      color: var(--error-color);
-    }
-
     .hidden {
       display: none;
+    }
+
+    .label-container.error {
+      color: var(--at-error-color);
+    }
+
+    .hint-container.error {
+      color: var(--at-error-color);
+    }
+
+    #field.field {
+      margin: 0;
+    }
+
+    #field.field.error {
+      margin: 0 0 2px;
     }
   </style>
   <template>
@@ -104,9 +110,9 @@
         </div>
         <content id="shadow"></content>
       </div>
-    </div>
-    <div id="hintContainer" class="hint-container">
-      <p id="errorHtml" class="hint"></p>
+      <div id="hintContainer" class="hint-container">
+        <p id="errorHtml" class="hint"></p>
+      </div>
     </div>
   </template>
 </dom-module>
