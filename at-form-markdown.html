@@ -134,7 +134,6 @@
       value: {
         type: String,
         value: '',
-        notify: true,
         observer: 'valueChanged',
         xtype: "textarea"
       },
@@ -275,18 +274,26 @@
       editor.run();
 
       // 10) attach to wmdInput chage event to update component value
-      var _self = this;
+      var self = this;
+      var inputProvider = this.$.wmdInput;
       this.$.wmdInput.addEventListener('change', function(e) {
-        _self.value = _self.$.wmdInput.value;
+        var newValue = inputProvider.value;
+        self.value = newValue;
+        self.validate();
+        self._fireValueChangedEvent(newValue);
       });
 
       this._isReady = true;
     },
-    valueChanged: function(oldValue, newValue) {
+    valueChanged: function(newValue, oldValue) {
+      this.$.wmdInput.value = newValue;
       if (this._isReady) {
-        this.$.wmdInput.value = this.value;
         this.validate();
+        this._fireValueChangedEvent(newValue);
       }
+    },
+    _fireValueChangedEvent: function (newValue) {
+      this.fire('value-changed', { value: newValue });
     },
     _updateUIValidState: function(isValid) {
       this.toggleClass('error', !isValid, this.$.field);
