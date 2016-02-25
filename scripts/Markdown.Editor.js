@@ -1475,69 +1475,53 @@
       buttonRow = Polymer.dom(buttonBar).appendChild(buttonRow);
       panels.editButtonBar = buttonRow;
       var xPosition = 0;
-      var makeButton = function (id, title, XShift, textOp, cssClassName, buttonRowToAddButtonTo) {
-        var button = document.createElement("li");
-        //button.className = "wmd-button";
-        button.style.left = xPosition + "px";
-        xPosition += 25;
-        var buttonImage = document.createElement("span");
-        buttonImage.classList.add(cssClassName); // added this line
-        button.id = id;
-        Polymer.dom(button).appendChild(buttonImage);
+      var makeButton = function (id, title, textOp) {
+        var selector = "#" + id;
+        var button = Polymer.dom(buttonBar).querySelector(selector);
         button.title = title;
-        button.XShift = XShift;
-        if (textOp)
+        if (textOp) {
           button.textOp = textOp;
+        }
         setupButton(button, true);
-        Polymer.dom(buttonRowToAddButtonTo).appendChild(button);
         return button;
       };
-      var makeSpacer = function (num) {
-        var spacer = document.createElement("li");
-        spacer.className = "wmd-spacer wmd-spacer" + num;
-        spacer.id = "wmd-spacer" + num;
-        Polymer.dom(buttonRow).appendChild(spacer);
-        xPosition += 25;
-      };
 
-      buttons.bold = makeButton("wmd-bold-button", getString("bold"), "0px", bindCommand("doBold"), "icon-bold", buttonRow);
-      buttons.italic = makeButton("wmd-italic-button", getString("italic"), "-20px", bindCommand("doItalic"), "icon-italic", buttonRow);
-      //makeSpacer(1);
-      buttons.link = makeButton("wmd-link-button", getString("link"), "-40px", bindCommand(function (chunk, postProcessing) {
+      buttons.bold = makeButton("btnBold", getString("bold"), bindCommand("doBold"));
+      buttons.italic = makeButton("btnItalic", getString("italic"), bindCommand("doItalic"));
+      buttons.link = makeButton("btnLink", getString("link"), bindCommand(function (chunk, postProcessing) {
         return this.doLinkOrImage(chunk, postProcessing, false);
-      }), "icon-chain", buttonRow);
-      buttons.quote = makeButton("wmd-quote-button", getString("quote"), "-60px", bindCommand("doBlockquote"), "icon-quote-right", buttonRow);
-      buttons.code = makeButton("wmd-code-button", getString("code"), "-80px", bindCommand("doCode"), "icon-code", buttonRow);
-      buttons.image = makeButton("wmd-image-button", getString("image"), "-100px", bindCommand(function (chunk, postProcessing) {
+      }));
+      buttons.quote = makeButton("btnQuote", getString("quote"), bindCommand("doBlockquote"));
+      buttons.code = makeButton("btnCode", getString("code"), bindCommand("doCode"));
+      buttons.image = makeButton("btnImage", getString("image"), bindCommand(function (chunk, postProcessing) {
         return this.doLinkOrImage(chunk, postProcessing, true);
-      }), "icon-image", buttonRow);
-      //makeSpacer(2);
-      buttons.olist = makeButton("wmd-olist-button", getString("olist"), "-120px", bindCommand(function (chunk, postProcessing) {
+      }));
+      buttons.olist = makeButton("btnOlist", getString("olist"), bindCommand(function (chunk, postProcessing) {
         this.doList(chunk, postProcessing, true);
-      }), "icon-list-ol", buttonRow);
-      buttons.ulist = makeButton("wmd-ulist-button", getString("ulist"), "-140px", bindCommand(function (chunk, postProcessing) {
+      }));
+      buttons.ulist = makeButton("btnUlist", getString("ulist"), bindCommand(function (chunk, postProcessing) {
         this.doList(chunk, postProcessing, false);
-      }), "icon-list-ul", buttonRow);
-      buttons.heading = makeButton("wmd-heading-button", getString("heading"), "-160px", bindCommand("doHeading"), "icon-header", buttonRow);
+      }));
+      buttons.heading = makeButton("btnHeading", getString("heading"), bindCommand("doHeading"));
+
       //buttons.hr = makeButton("wmd-hr-button", getString("hr"), "-180px", bindCommand("doHorizontalRule")); // commented out horizontal line button
-      //makeSpacer(3);
-      buttons.undo = makeButton("wmd-undo-button", getString("undo"), "-200px", null, "icon-rotate-left", buttonRow);
+      buttons.undo = makeButton("bntUndo", getString("undo"), null);
       buttons.undo.execute = function (manager) {
-        if (manager) manager.undo();
+        if (manager) { manager.undo(); }
       };
 
       var redoTitle = /win/.test(nav.platform.toLowerCase()) ?
         getString("redo") :
         getString("redomac"); // mac and other non-Windows platforms
 
-      buttons.redo = makeButton("wmd-redo-button", redoTitle, "-220px", null, "icon-repeat", buttonRow);
+      buttons.redo = makeButton("btnRedo", redoTitle, null);
       buttons.redo.execute = function (manager) {
-        if (manager) manager.redo();
+        if (manager) { manager.redo(); }
       };
 
-      buttons.preview = makeButton("wmd-preview-button", getString("preview"), "-240px", bindCommand(function (chunk, postProcessing) {
+      buttons.preview = makeButton("btnPreview", getString("preview"),bindCommand(function (chunk, postProcessing) {
         this.doPreview(chunk, postProcessing, panels);
-      }), "icon-eye", buttonRow);
+      }));
 
       if (helpOptions) {
         var helpButton = document.createElement("li");
