@@ -117,7 +117,7 @@
     }
     var getString = function (identifier) {
       return options.strings[identifier] || defaultsStrings[identifier];
-    }
+    };
 
     var hooks = this.hooks = new Markdown.HookCollection();
     hooks.addNoop("onPreviewRefresh"); // called with no arguments after the preview has been refreshed
@@ -130,7 +130,7 @@
 
     this.getConverter = function () {
       return markdownConverter;
-    }
+    };
 
     var that = this,
       panels;
@@ -156,7 +156,7 @@
           undoManager.setCommandMode();
           f();
           that.refreshPreview();
-        }
+        };
       }
 
       uiManager = new UIManager(panels, undoManager, previewManager, commandManager, options.helpButton, getString, this._shadowRoot);
@@ -169,7 +169,7 @@
       forceRefresh();
     };
 
-  }
+  };
 
   // before: contains all the text in the input box BEFORE the selection.
   // after: contains all the text in the input box AFTER the selection.
@@ -233,11 +233,11 @@
       beforeReplacer = function (s) {
         that.before += s;
         return "";
-      }
+      };
       afterReplacer = function (s) {
         that.after = s + that.after;
         return "";
-      }
+      };
     }
 
     this.selection = this.selection.replace(/^(\s*)/, beforeReplacer).replace(/(\s*)$/, afterReplacer);
@@ -332,7 +332,7 @@
     // *ij* this.previewButtonBar is a private variable; its not supplied from the outside
     // it just needs to exist; it doens't need to be initialized here
     this.previewButtonBar = undefined;
-  };
+  }
 
   // Returns true if the DOM element is visible, false if it's hidden.
   // Checks if display is anything other than none.
@@ -343,7 +343,7 @@
       return window.getComputedStyle(elem, null).getPropertyValue("display") !== "none";
     } else if (elem.currentStyle) {
       // IE
-      return elem.currentStyle["display"] !== "none";
+      return elem.currentStyl.display !== "none";
     }
   };
 
@@ -411,7 +411,7 @@
     pattern = pre + pattern + post;
 
     return new re(pattern, flags);
-  }
+  };
 
   // UNFINISHED
   // The assignment in the while loop makes jslint cranky.
@@ -419,7 +419,7 @@
   position.getTop = function (elem, isInner) {
     var result = elem.offsetTop;
     if (!isInner) {
-      while (elem = elem.offsetParent) {
+      while (elem === elem.offsetParent) {
         result += elem.offsetTop;
       }
     }
@@ -668,7 +668,7 @@
 
       var handlePaste = function () {
         if (uaSniffed.isIE || (inputStateObj && inputStateObj.text != panels.input.value)) {
-          if (timer == undefined) {
+          if (timer === undefined) {
             mode = "paste";
             saveState();
             refreshState();
@@ -720,7 +720,7 @@
         this.text = inputArea.value;
       }
 
-    }
+    };
 
     // Sets the selected text in the input box after we've performed an
     // operation.
@@ -802,7 +802,7 @@
     // Restore this state into the input area.
     this.restore = function () {
 
-      if (stateObj.text != undefined && stateObj.text != inputArea.value) {
+      if (stateObj.text !== undefined && stateObj.text !== inputArea.value) {
         inputArea.value = stateObj.text;
 
         var changeEvent = document.createEvent('event');
@@ -839,7 +839,7 @@
       this.scrollTop = chunk.scrollTop;
     };
     this.init();
-  };
+  }
 
   function PreviewManager(converter, panels, previewRefreshCallback) {
 
@@ -908,11 +908,11 @@
 
     this.TriggerPreviewRefresh = function () {
       makePreviewHtml();
-    }
+    };
 
     var onConversionComplete = function (convertedText) {
       pushPreviewHtml(convertedText);
-    }
+    };
 
     // setTimeout is already used.  Used as an event listener.
     var applyTimeout = function () {
@@ -979,11 +979,11 @@
         Polymer.dom(parent).appendChild(preview);
       else
         Polymer.dom(parent).insertBefore(preview, sibling);
-    }
+    };
 
     var nonSuckyBrowserPreviewSet = function (text) {
       panels.preview.innerHTML = text;
-    }
+    };
 
     var previewSetter;
 
@@ -1038,7 +1038,7 @@
     };
 
     init();
-  };
+  }
 
   // Creates the background behind the hyperlink text entry box.
   // And download dialog
@@ -1051,7 +1051,6 @@
 
     //background.className = "wmd-prompt-background";
     background.classList.add("wmd-prompt-background");
-    background.setAttribute('style-scope', 'at-form-markdown');
 
     style.position = "absolute";
     style.top = "0";
@@ -1123,7 +1122,7 @@
         // Fixes common pasting errors.
         text = text.replace(/^http:\/\/(https?|ftp):\/\//, '$1://');
 
-        if (!(text.slice(0, 1) === "/") && text.indexOf(":\/\/") === -1) {
+        if ((text.slice(0, 1) !== "/") && text.indexOf(":\/\/") === -1) {
           if (!/^(?:https?|ftp):\/\//.test(text))
             text = 'http://' + text;
         }
@@ -1143,7 +1142,6 @@
       // The main dialog box.
       dialog = doc.createElement("div");
       dialog.classList.add('wmd-prompt-dialog');
-      dialog.setAttribute('style-scope', 'at-form-markdown');
       //dialog.className = "wmd-prompt-dialog";
       dialog.style.padding = "10px;";
       dialog.style.position = "fixed";
@@ -1152,10 +1150,9 @@
 
       // The dialog text.
       var question = doc.createElement("div");
-      question.setAttribute('style-scope', 'at-form-markdown');
       question.innerHTML = text;
       question.style.padding = "5px";
-      dialog.appendChild(question);
+      Polymer.dom(dialog).appendChild(question);
 
       // The web form container for the text box and buttons.
       var form = doc.createElement("form"),
@@ -1173,7 +1170,6 @@
 
       // The input text box
       input = doc.createElement("input");
-      input.setAttribute('style-scope', 'at-form-markdown');
       input.type = "text";
       input.value = defaultInputText;
       style = input.style;
@@ -1184,7 +1180,6 @@
 
       // The ok button
       var okButton = doc.createElement("input");
-      okButton.setAttribute('style-scope', 'at-form-markdown');
       okButton.type = "button";
       okButton.onclick = function () {
         return close(false);
@@ -1411,7 +1406,7 @@
       if (button.execute) {
         button.execute(undoManager);
       }
-    };
+    }
 
     function setupButton(button, isEnabled) {
 
@@ -1449,7 +1444,7 @@
             }
             doClick(this);
             return false;
-          }
+          };
         }
       } else {
         image.style.backgroundPosition = button.XShift + " " + disabledYShift;
@@ -1462,7 +1457,7 @@
         method = commandManager[method];
       return function () {
         method.apply(commandManager, arguments);
-      }
+      };
     }
 
     function makeSpritedButtonRow() {
@@ -1474,40 +1469,36 @@
       var highlightYShift = "-40px";
 
       var buttonRow = document.createElement("ul");
-      buttonRow.setAttribute('style-scope', 'at-form-markdown');
       buttonRow.id = "wmd-button-row";
       buttonRow.className = 'toolbar'; //buttonRow.className = 'wmd-button-row';
       buttonRow.style.display = "inline-block";
-      buttonRow = buttonBar.appendChild(buttonRow);
+      buttonRow = Polymer.dom(buttonBar).appendChild(buttonRow);
       panels.editButtonBar = buttonRow;
       var xPosition = 0;
       var makeButton = function (id, title, XShift, textOp, cssClassName, buttonRowToAddButtonTo) {
         var button = document.createElement("li");
-        button.setAttribute('style-scope', 'at-form-markdown');
         //button.className = "wmd-button";
         button.style.left = xPosition + "px";
         xPosition += 25;
         var buttonImage = document.createElement("span");
-        buttonImage.setAttribute('style-scope', 'at-form-markdown');
         buttonImage.classList.add(cssClassName); // added this line
         button.id = id;
-        button.appendChild(buttonImage);
+        Polymer.dom(button).appendChild(buttonImage);
         button.title = title;
         button.XShift = XShift;
         if (textOp)
           button.textOp = textOp;
         setupButton(button, true);
-        buttonRowToAddButtonTo.appendChild(button);
+        Polymer.dom(buttonRowToAddButtonTo).appendChild(button);
         return button;
       };
       var makeSpacer = function (num) {
         var spacer = document.createElement("li");
-        spacer.setAttribute('style-scope', 'at-form-markdown');
         spacer.className = "wmd-spacer wmd-spacer" + num;
         spacer.id = "wmd-spacer" + num;
-        buttonRow.appendChild(spacer);
+        Polymer.dom(buttonRow).appendChild(spacer);
         xPosition += 25;
-      }
+      };
 
       buttons.bold = makeButton("wmd-bold-button", getString("bold"), "0px", bindCommand("doBold"), "icon-bold", buttonRow);
       buttons.italic = makeButton("wmd-italic-button", getString("italic"), "-20px", bindCommand("doItalic"), "icon-italic", buttonRow);
@@ -1550,11 +1541,9 @@
 
       if (helpOptions) {
         var helpButton = document.createElement("li");
-        helpButton.setAttribute('style-scope', 'at-form-markdown');
         var helpButtonImage = document.createElement("span");
-        helpButtonImage.setAttribute('style-scope', 'at-form-markdown');
         helpButtonImage.classList.add("icon-question"); // i added this
-        helpButton.appendChild(helpButtonImage);
+        Polymer.dom(helpButton).appendChild(helpButtonImage);
         //helpButton.className = "wmd-button wmd-help-button";
         helpButton.id = "wmd-help-button";
         helpButton.XShift = "-240px";
@@ -1564,16 +1553,15 @@
         helpButton.onclick = helpOptions.handler;
 
         setupButton(helpButton, true);
-        buttonRow.appendChild(helpButton);
+        Polymer.dom(buttonRow).appendChild(helpButton);
         buttons.help = helpButton;
       }
 
       // create buttons for preview
       var previewButtonRow = document.createElement("ul");
-      previewButtonRow.setAttribute('style-scope', 'at-form-markdown');
       previewButtonRow.id = "wmd-preview-button-row";
       previewButtonRow.className = 'toolbar'; //buttonRow.className = 'wmd-button-row';
-      previewButtonRow = buttonBar.appendChild(previewButtonRow);
+      previewButtonRow = Polymer.dom(buttonBar).appendChild(previewButtonRow);
       panels.previewButtonBar = previewButtonRow;
       previewButtonRow.style.display = "none";
 
@@ -1584,11 +1572,10 @@
 
       // for fullscreen and stuff
       var serviceButtonRow = document.createElement("ul");
-      serviceButtonRow.setAttribute('style-scope', 'at-form-markdown');
       serviceButtonRow.id = "wmd-service-button-row";
       serviceButtonRow.className = 'toolbar'; //buttonRow.className = 'wmd-button-row';
       serviceButtonRow.style.display = "inline-block";
-      serviceButtonRow = buttonBar.appendChild(serviceButtonRow);
+      serviceButtonRow = Polymer.dom(buttonBar).appendChild(serviceButtonRow);
 
       buttons.toggleFullScreen = makeButton("wmd-toggle-fullscreen-button", getString("toggleFullscreen"), "0px", null, "icon-arrows-alt", serviceButtonRow);
       buttons.toggleFullScreen.isFullScreenOn = false;
@@ -1633,7 +1620,7 @@
         setupButton(buttons.undo, undoManager.canUndo());
         setupButton(buttons.redo, undoManager.canRedo());
       }
-    };
+    }
 
     this.setUndoRedoButtonStates = setUndoRedoButtonStates;
 
@@ -1820,7 +1807,6 @@
         case "?":
           inQueryString = true;
           return "?";
-          break;
 
           // In the query string, a plus and a space are identical -- normalize.
           // Not strictly necessary, but identical behavior to the previous version
@@ -1831,7 +1817,7 @@
           break;
         }
         return encodeURI(match);
-      })
+      });
 
       if (title) {
         title = title.trim ? title.trim() : title.replace(/^\s*/, "").replace(/\s*$/, "");
@@ -2315,7 +2301,7 @@
     // We make a level 2 header if there is no current header.
     // If there is a header level, we substract one from the header level.
     // If it's already a level 1 header, it's removed.
-    var headerLevelToCreate = headerLevel == 0 ? 2 : headerLevel - 1;
+    var headerLevelToCreate = headerLevel === 0 ? 2 : headerLevel - 1;
 
     if (headerLevelToCreate > 0) {
 
@@ -2337,7 +2323,7 @@
     chunk.startTag = "----------\n";
     chunk.selection = "";
     chunk.skipLines(2, 1, true);
-  }
+  };
 
   commandProto.doPreview = function (chunks, postProcessing, panels) {
     var editorBox = panels.input.parentElement;
@@ -2353,7 +2339,7 @@
     panels.editButtonBar.style.display = "none";
     // 4. show the preview button bar with close preview button
     panels.previewButtonBar.style.display = "inline-block";
-  }
+  };
 
   commandProto.doHidePreview = function (chunks, postProcessing, panels) {
     var editorBox = panels.input.parentElement;
@@ -2367,5 +2353,5 @@
     panels.editButtonBar.style.display = "inline-block";
     // 4. hide the preview button bar with close preview button
     panels.previewButtonBar.style.display = "none";
-  }
+  };
 })(window.Polymer);

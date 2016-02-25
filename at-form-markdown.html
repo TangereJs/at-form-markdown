@@ -7,9 +7,11 @@
 
 <link rel="import" href="markdown-default-converter.html" />
 <link rel="import" href="markdown-sanitizing-decorator/markdown-sanitizing-decorator.html" />
-<link rel="import" href="../at-core-theme/at-core-theme.html" />
 <link rel="import" href="../at-form-behaviors/at-form-behaviors-validation.html">
 <link rel="import" href="../at-theme/at-theme.html">
+<link rel="import" href="../at-carbon-icon-button/at-carbon-icon-button.html">
+<link rel="import" href="styles/at-form-markdown-styles.html">
+<link rel="import" href="styles/pretty-toolbar/pretty-toolbar-styles.html">
 <!--
     at-form-markdown is a polymer component for markdown markup
     @properties
@@ -46,55 +48,82 @@
 </style>
 
 <dom-module id="at-form-markdown">
-  <link rel="import" type="css" href="styles/at-form-markdown.css" />
-  <link rel="import" type="css" href="styles/prettify.css" />
-  <link rel="import" type="css" href="styles/pretty-toolbar/pretty-toolbar.css" />
-  <style>
-    #label {
-      font-weight: bold;
-      font-size: inherit;
-    }
-
-    #wmdButtonBar[disabled] {
-      pointer-events: none;
-    }
-
-    #wmdInput[disabled] {
-      pointer-events: none;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .label-container.error {
-      color: var(--at-error-color);
-    }
-
-    .hint-container.error {
-      color: var(--at-error-color);
-    }
-
-    #field.field {
-      margin: 0;
-    }
-
-    #field.field.error {
-      margin: 0 0 2px;
-    }
-  </style>
   <template>
-    <at-core-theme></at-core-theme>
-    <div id="wrapper" class="ui form">
+    <style include="at-form-common"></style>
+    <style include="at-form-markdown-styles"></style>
+    <style include="pretty-toolbar-styles"></style>
+    <link rel="import" type="css" href="styles/prettify.css" />
+    <style>
+      #label {
+        font-weight: bold;
+        font-size: inherit;
+      }
+
+      #wmdButtonBar[disabled] {
+        pointer-events: none;
+      }
+
+      #wmdInput[disabled] {
+        pointer-events: none;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .label-container.error {
+        color: var(--at-error-color);
+      }
+
+      .hint-container.error {
+        color: var(--at-error-color);
+      }
+
+      #field.field {
+        margin: 0;
+      }
+
+      #field.field.error {
+        margin: 0 0 2px;
+      }
+
+      .carbon-icon-button {
+        width: 32px;
+        height: 32px;
+        padding: 4px;
+      }
+    </style>
+    <div id="atContainer" class="at-container">
       <div id="field" class="field">
-        <div id="labelContainer">
-          <label id="label">{{label}}</label>
-        </div>
-        <div id="wmdBox" class="wmd-box" onload="prettyPrint()">
+        <iron-label id="label">{{label}}</iron-label>
+        <div id="contentContainer" class="wmd-box at-content-container" onload="prettyPrint()">
           <div class="wmd-innerbox">
+            <div id="buttonToolbar">
+              <div id="editToolbar">
+                <at-carbon-icon-button title="Strong <strong> CTRL+B" icon="now:bold" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Emphasis <em> CTRL+I" icon="now:italic" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Hyperlink <a> CTRL+L" icon="now:link" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Blockquote <blockquote> CTRL+Q" icon="now:quote" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Code sample <code> <pre> CTRL+K" icon="now:code" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Image <img> CTRL+G" icon="now:picture" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Numbered list <ol> CTRL+O" icon="now:list-numbered" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Bulleted list <ul> CTRL+U" icon="now:list-bullets" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Heading <h1>/<h2> CTRL+H" icon="now:heading" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Undo CTRL+Z" icon="now:undo" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Redo CTRL+Y" icon="now:redo" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Preview" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
+                <at-carbon-icon-button title="Markdown editing help" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
+              </div>
+              <div id="previewToolbar" class="hidden">
+                <at-carbon-icon-button title="Close preview" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
+              </div>
+              <div id="serviceToolbar">
+                <at-carbon-icon-button title="Toggle fullscreen" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
+              </div>
+            </div>
             <div id="wmdButtonBar" class="wmd-button-bar"></div>
             <div class="wmd-editor-box">
-              <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input"></textarea>
+              <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input at-content"></textarea>
               <div id="markdownBottomText">
                 <div id="chromeText" style="display: none">Attach images by dragging and dropping, <a id="chromeTextLink" href="javascript:void(0)">selecting them</a>, or pasting from the clipboard.</div>
                 <div id="nonChromeText" style="display: none">Attach images by dragging and dropping or <a id="nonChromeTextLink" href="javascript:void(0)">selecting them</a>.</div>
@@ -110,9 +139,7 @@
         </div>
         <content id="shadow"></content>
       </div>
-      <div id="hintContainer" class="hint-container">
-        <p id="errorHtml" class="hint"></p>
-      </div>
+      <div id="hint"></div>
     </div>
   </template>
 </dom-module>
@@ -190,10 +217,9 @@
       type: "string",
       xtype: "marked"
     }],
-    _scopeCssViaAttr: true,
     hideChanged: function(newValue, oldValue) {
-      var wrapper = this.$.wrapper;
-      this.toggleClass('hidden', newValue, wrapper);
+      var atContainer = this.$.atContainer;
+      this.toggleClass('hidden', newValue, atContainer);
       if (this._isReady) {
         this.validate();
       }
@@ -242,7 +268,7 @@
 
       // 3) instantiate the Markdown.Editor
       var panelsCollection = {
-        buttonBar: this.$.wmdButtonBar,
+        buttonBar: this.$.buttonToolbar,
         preview: this.$.wmdPreview,
         input: this.$.wmdInput
       };
@@ -285,7 +311,7 @@
 
       this._isReady = true;
     },
-    focus: function () {
+    focus: function() {
       var valueProvider = this.$.wmdInput;
       valueProvider.focus();
     },
@@ -296,12 +322,15 @@
         this._fireValueChangedEvent(newValue);
       }
     },
-    _fireValueChangedEvent: function (newValue) {
-      this.fire('value-changed', { value: newValue });
+    _fireValueChangedEvent: function(newValue) {
+      this.fire('value-changed', {
+        value: newValue
+      });
     },
     _updateUIValidState: function(isValid) {
-      this.toggleClass('error', !isValid, this.$.field);
-      this.toggleClass('error', !isValid, this.$.hintContainer);
+      this.toggleClass('error', !isValid, this.$.label);
+      this.toggleClass('error', !isValid, this.$.contentContainer);
+      this.toggleClass('error', !isValid, this.$.hint);
     },
     disabledChanged: function(newValue, oldValue) {
       if (this.disabled) {
@@ -317,10 +346,13 @@
         this.validate();
       }
     },
-    requiredChanged: function (newValue, oldValue) {
+    requiredChanged: function(newValue, oldValue) {
       if (this._isReady) {
         this.validate();
       }
+    },
+    _getFocusableElement: function () {
+      return this.$.wmdInput;
     },
     inlineAttachmentUploadUrlChanged: function(oldValue, newValue) {
       if (!this._isReady) {

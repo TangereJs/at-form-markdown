@@ -1,0 +1,173 @@
+<dom-module id="pretty-toolbar-styles">
+  <template>
+    <style>
+      [class^="icon-"],
+      [class*=" icon-"] {
+        font-family: 'icomoon';
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        /* Better Font Rendering =========== */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .icon-close:before {
+        content: "\f00d";
+      }
+
+      .icon-repeat:before {
+        content: "\f01e";
+      }
+
+      .icon-refresh:before {
+        content: "\f021";
+      }
+
+      .icon-bold:before {
+        content: "\f032";
+      }
+
+      .icon-italic:before {
+        content: "\f033";
+      }
+
+      .icon-indent:before {
+        content: "\f03c";
+      }
+
+      .icon-image:before {
+        content: "\f03e";
+      }
+
+      .icon-pencil:before {
+        content: "\f040";
+      }
+
+      .icon-mail-forward:before {
+        content: "\f064";
+      }
+
+      .icon-compress:before {
+        content: "\f066";
+      }
+
+      .icon-eye:before {
+        content: "\f06e";
+      }
+
+      .icon-eye-slash:before {
+        content: "\f070";
+      }
+
+      .icon-arrows-alt:before {
+        content: "\f0b2";
+      }
+
+      .icon-chain:before {
+        content: "\f0c1";
+      }
+
+      .icon-list-ul:before {
+        content: "\f0ca";
+      }
+
+      .icon-list-ol:before {
+        content: "\f0cb";
+      }
+
+      .icon-rotate-left:before {
+        content: "\f0e2";
+      }
+
+      .icon-comment-o:before {
+        content: "\f0e5";
+      }
+
+      .icon-angle-right:before {
+        content: "\f105";
+      }
+
+      .icon-quote-left:before {
+        content: "\f10d";
+      }
+
+      .icon-quote-right:before {
+        content: "\f10e";
+      }
+
+      .icon-mail-reply:before {
+        content: "\f112";
+      }
+
+      .icon-keyboard-o:before {
+        content: "\f11c";
+      }
+
+      .icon-code:before {
+        content: "\f121";
+      }
+
+      .icon-question:before {
+        content: "\f128";
+      }
+
+      .icon-header:before {
+        content: "\f1dc";
+      }
+
+      .icon-toggle-off:before {
+        content: "\f204";
+      }
+
+      .icon-toggle-on:before {
+        content: "\f205";
+      }
+
+      .toolbar {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .toolbar li {
+        /*position: relative;*/
+        display: inline-block;
+        margin-right: -4px;
+      }
+
+      .toolbar span {
+        display: block;
+        background-color: #f7f7f7;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#e7e7e7));
+        background-image: -webkit-linear-gradient(top, #f7f7f7, #e7e7e7);
+        background-image: -moz-linear-gradient(top, #f7f7f7, #e7e7e7);
+        background-image: -ms-linear-gradient(top, #f7f7f7, #e7e7e7);
+        background-image: -o-linear-gradient(top, #f7f7f7, #e7e7e7);
+        color: #a7a7a7;
+        margin: 8px 6px;
+        width: 22px;
+        height: 22px;
+        position: relative;
+        text-align: center;
+        line-height: 22px;
+        border-radius: 50%;
+        box-shadow: 0px 3px 8px #aaa, inset 0px 2px 3px #fff;
+        font-size: 16px;
+        text-decoration: none;
+        cursor: default;
+        font-size: 12px;
+      }
+
+      .toolbar span:hover {
+        text-decoration: none;
+        color: #555;
+        background: #f5f5f5;
+        cursor: pointer;
+      }
+    </style>
+  </template>
+</dom-module>

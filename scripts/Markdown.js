@@ -4,7 +4,7 @@
 
 (function (Markdown) {
   'use strict';
-  
+
   // autogrow function adjusts the size of the text area to match the size of the content
   Markdown.autoGrow = function (textarea) {
     textarea.oninput = function () {
@@ -16,6 +16,6 @@
     var inputEvent = document.createEvent('Event');
     inputEvent.initEvent('input', true, true);
     textarea.dispatchEvent(inputEvent);
-  }
+  };
 
 })(window.Markdown = window.Markdown || {});
