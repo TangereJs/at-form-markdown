@@ -7,6 +7,6 @@
     "at-form-behaviors": "TangereJs/at-form-behaviors#0.8-preview",
     "at-theme": "TangereJs/at-theme#0.8-preview",
     "iron-label": "PolymerElements/iron-label#master",
-    "at-carbon-icon-button": "TangereJs/at-carbon-icon-button.html"
+    "at-carbon-icon-button": "TangereJs/at-carbon-icon-button#master"
   }
 }
