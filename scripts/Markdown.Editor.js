@@ -1409,46 +1409,15 @@
     }
 
     function setupButton(button, isEnabled) {
-
-      var normalYShift = "0px";
-      var disabledYShift = "-20px";
-      var highlightYShift = "-40px";
-      var image = button.getElementsByTagName("span")[0];
       if (isEnabled) {
-        image.style.backgroundPosition = button.XShift + " " + normalYShift;
-        button.onmouseover = function () {
-          image.style.backgroundPosition = this.XShift + " " + highlightYShift;
-        };
-
-        button.onmouseout = function () {
-          image.style.backgroundPosition = this.XShift + " " + normalYShift;
-        };
-
-        // IE tries to select the background image "button" text (it's
-        // implemented in a list item) so we have to cache the selection
-        // on mousedown.
-        if (uaSniffed.isIE) {
-          button.onmousedown = function () {
-            if (_shadowRoot.activeElement && _shadowRoot.activeElement !== panels.input) { // we're not even in the input box, so there's no selection
-              return;
-            }
-            panels.ieCachedRange = document.selection.createRange();
-            panels.ieCachedScrollTop = panels.input.scrollTop;
-          };
-        }
-
         if (!button.isHelp) {
           button.onclick = function () {
-            if (this.onmouseout) {
-              this.onmouseout();
-            }
             doClick(this);
             return false;
           };
         }
       } else {
-        image.style.backgroundPosition = button.XShift + " " + disabledYShift;
-        button.onmouseover = button.onmouseout = button.onclick = function () {};
+        button.onclick = function () {};
       }
     }
 
@@ -1464,17 +1433,6 @@
 
       var buttonBar = panels.buttonBar;
 
-      var normalYShift = "0px";
-      var disabledYShift = "-20px";
-      var highlightYShift = "-40px";
-
-      var buttonRow = document.createElement("ul");
-      buttonRow.id = "wmd-button-row";
-      buttonRow.className = 'toolbar'; //buttonRow.className = 'wmd-button-row';
-      buttonRow.style.display = "inline-block";
-      buttonRow = Polymer.dom(buttonBar).appendChild(buttonRow);
-      panels.editButtonBar = buttonRow;
-      var xPosition = 0;
       var makeButton = function (id, title, textOp) {
         var selector = "#" + id;
         var button = Polymer.dom(buttonBar).querySelector(selector);
@@ -1505,7 +1463,7 @@
       buttons.heading = makeButton("btnHeading", getString("heading"), bindCommand("doHeading"));
 
       //buttons.hr = makeButton("wmd-hr-button", getString("hr"), "-180px", bindCommand("doHorizontalRule")); // commented out horizontal line button
-      buttons.undo = makeButton("bntUndo", getString("undo"), null);
+      buttons.undo = makeButton("btnUndo", getString("undo"), null);
       buttons.undo.execute = function (manager) {
         if (manager) { manager.undo(); }
       };
@@ -1519,37 +1477,19 @@
         if (manager) { manager.redo(); }
       };
 
-      buttons.preview = makeButton("btnPreview", getString("preview"),bindCommand(function (chunk, postProcessing) {
+      buttons.preview = makeButton("btnPreview", getString("preview"), bindCommand(function (chunk, postProcessing) {
         this.doPreview(chunk, postProcessing, panels);
       }));
 
       if (helpOptions) {
-        var helpButton = document.createElement("li");
-        var helpButtonImage = document.createElement("span");
-        helpButtonImage.classList.add("icon-question"); // i added this
-        Polymer.dom(helpButton).appendChild(helpButtonImage);
-        //helpButton.className = "wmd-button wmd-help-button";
-        helpButton.id = "wmd-help-button";
-        helpButton.XShift = "-240px";
+        var helpButton = makeButton("btnHelp", getString("help"), "");
         helpButton.isHelp = true;
-        //helpButton.style.right = "0px";
-        helpButton.title = getString("help");
         helpButton.onclick = helpOptions.handler;
-
         setupButton(helpButton, true);
-        Polymer.dom(buttonRow).appendChild(helpButton);
         buttons.help = helpButton;
       }
 
-      // create buttons for preview
-      var previewButtonRow = document.createElement("ul");
-      previewButtonRow.id = "wmd-preview-button-row";
-      previewButtonRow.className = 'toolbar'; //buttonRow.className = 'wmd-button-row';
-      previewButtonRow = Polymer.dom(buttonBar).appendChild(previewButtonRow);
-      panels.previewButtonBar = previewButtonRow;
-      previewButtonRow.style.display = "none";
-
-      buttons.hidePreview = makeButton("wmd-hide-preview-button", getString("hidePreview"), "0px", null, "icon-eye-slash", previewButtonRow);
+      buttons.hidePreview = makeButton("btnPreview", getString("hidePreview"), null);
       buttons.hidePreview.addEventListener('click', function (e) {
         commandManager.doHidePreview(null, null, panels);
       });
