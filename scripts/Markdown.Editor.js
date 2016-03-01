@@ -327,6 +327,9 @@
   // normally since the focus never leaves the textarea.
   function PanelCollection(panelCollection) {
     this.buttonBar = panelCollection.buttonBar;
+    this.editToolbar = panelCollection.editToolbar;
+    this.previewToolbar = panelCollection.previewToolbar;
+    this.serviceToolbar = panelCollection.serviceToolbar;
     this.preview = panelCollection.preview;
     this.input = panelCollection.input;
     // *ij* this.previewButtonBar is a private variable; its not supplied from the outside
@@ -974,7 +977,7 @@
       var parent = preview.parentNode;
       var sibling = preview.nextSibling;
       Polymer.dom(parent).removeChild(preview);
-      preview.innerHTML = text;
+      Polymer.dom(preview).innerHTML = text;
       if (!sibling)
         Polymer.dom(parent).appendChild(preview);
       else
@@ -982,7 +985,7 @@
     };
 
     var nonSuckyBrowserPreviewSet = function (text) {
-      panels.preview.innerHTML = text;
+      Polymer.dom(panels.preview).innerHTML = text;
     };
 
     var previewSetter;
@@ -1489,50 +1492,41 @@
         buttons.help = helpButton;
       }
 
-      buttons.hidePreview = makeButton("btnPreview", getString("hidePreview"), null);
+      buttons.hidePreview = makeButton("btnHidePreview", getString("hidePreview"), null);
       buttons.hidePreview.addEventListener('click', function (e) {
         commandManager.doHidePreview(null, null, panels);
       });
 
       // for fullscreen and stuff
-      var serviceButtonRow = document.createElement("ul");
-      serviceButtonRow.id = "wmd-service-button-row";
-      serviceButtonRow.className = 'toolbar'; //buttonRow.className = 'wmd-button-row';
-      serviceButtonRow.style.display = "inline-block";
-      serviceButtonRow = Polymer.dom(buttonBar).appendChild(serviceButtonRow);
 
-      buttons.toggleFullScreen = makeButton("wmd-toggle-fullscreen-button", getString("toggleFullscreen"), "0px", null, "icon-arrows-alt", serviceButtonRow);
+      buttons.toggleFullScreen = makeButton("btnToggleFullscreen", getString("toggleFullscreen"), null);
       buttons.toggleFullScreen.isFullScreenOn = false;
       buttons.toggleFullScreen.addEventListener('click', function (e) {
         var fullscreenButton = buttons.toggleFullScreen;
-        var fullScreenButtonSpan = fullscreenButton.querySelector('span');
-        var wmdBox = Polymer.dom(shadowRoot).querySelector('#wmdBox');
-        var wmdInnerBox = Polymer.dom(shadowRoot).querySelector('.wmd-innerbox');
-        var body = document.querySelector('body');
-        var wmdButtonBar = Polymer.dom(shadowRoot).querySelector('#wmdButtonBar');
+
+        var wmdBox = Polymer.dom(shadowRoot).querySelector('#contentContainer');
+        var wmdInnerBox = Polymer.dom(wmdBox).querySelector('.wmd-editor-box');
+        var body = document.body;
+        var wmdButtonBar = Polymer.dom(wmdBox).querySelector('#buttonToolbar');
 
         if (fullscreenButton.isFullScreenOn) {
           fullscreenButton.isFullScreenOn = false;
           // close the fullscreen
-          wmdBox.classList.remove('wmd-box-fullscreen');
-          wmdInnerBox.classList.remove('wmd-innerbox-fullscreen');
-          fullScreenButtonSpan.classList.add('icon-arrows-alt');
-          fullScreenButtonSpan.classList.remove('icon-compress');
+          Polymer.dom(wmdBox).classList.remove('wmd-box-fullscreen');
+          Polymer.dom(wmdInnerBox).classList.remove('wmd-innerbox-fullscreen');
+
           body.classList.remove('hideOverflow');
-          wmdButtonBar.classList.remove('wmd-button-bar-fullscreen');
+          Polymer.dom(wmdButtonBar).classList.remove('wmd-button-bar-fullscreen');
         } else {
           fullscreenButton.isFullScreenOn = true;
           // open the fullscreen
-          wmdBox.classList.add('wmd-box-fullscreen');
-          wmdInnerBox.classList.add('wmd-innerbox-fullscreen');
-          fullScreenButtonSpan.classList.remove('icon-arrows-alt');
-          fullScreenButtonSpan.classList.add('icon-compress');
-          body.classList.add('hideOverflow');
-          wmdButtonBar.classList.add('wmd-button-bar-fullscreen');
+          Polymer.dom(wmdBox).classList.add('wmd-box-fullscreen');
+          Polymer.dom(wmdInnerBox).classList.add('wmd-innerbox-fullscreen');
 
-          var inputEvent = document.createEvent('Event');
-          inputEvent.initEvent('input', true, true);
-          panels.input.dispatchEvent(inputEvent);
+          body.classList.add('hideOverflow');
+          Polymer.dom(wmdButtonBar).classList.add('wmd-button-bar-fullscreen');
+
+          panels.input.focus();
         }
       });
 
@@ -2260,9 +2254,9 @@
     this.previewManager.TriggerPreviewRefresh();
 
     // 3. hide the regular button bar - this bar is hidden via editorBox
-    panels.editButtonBar.style.display = "none";
+    panels.editToolbar.style.display = "none";
     // 4. show the preview button bar with close preview button
-    panels.previewButtonBar.style.display = "inline-block";
+    panels.previewToolbar.style.display = "inline-block";
   };
 
   commandProto.doHidePreview = function (chunks, postProcessing, panels) {
@@ -2274,8 +2268,8 @@
     // 2. show the preview
     previewBox.style.display = "none";
     // 3. show the regular button bar - this bar is hidden via editorBox
-    panels.editButtonBar.style.display = "inline-block";
+    panels.editToolbar.style.display = "inline-block";
     // 4. hide the preview button bar with close preview button
-    panels.previewButtonBar.style.display = "none";
+    panels.previewToolbar.style.display = "none";
   };
 })(window.Polymer);

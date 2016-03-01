@@ -5,13 +5,15 @@
 <script src="scripts/markdown-inline-attachment.js"></script>
 <script src="scripts/markdown-input.inline-attachment.js"></script>
 
-<link rel="import" href="markdown-default-converter.html" />
-<link rel="import" href="markdown-sanitizing-decorator/markdown-sanitizing-decorator.html" />
+<link rel="import" href="markdown-default-converter.html"/>
+<link rel="import" href="markdown-sanitizing-decorator/markdown-sanitizing-decorator.html"/>
+<link rel="import" href="../tangere/Tangere.html">
+<link rel="import" href="../at-i18n/at-i18n-behavior.html">
 <link rel="import" href="../at-form-behaviors/at-form-behaviors-validation.html">
 <link rel="import" href="../at-theme/at-theme.html">
 <link rel="import" href="../at-carbon-icon-button/at-carbon-icon-button.html">
 <link rel="import" href="styles/at-form-markdown-styles.html">
-<link rel="import" href="styles/pretty-toolbar/pretty-toolbar-styles.html">
+<link rel="import" href="styles/prettify-styles.html">
 <!--
     at-form-markdown is a polymer component for markdown markup
     @properties
@@ -35,31 +37,13 @@
         personally I dislike how inline-attachment is currently implemented - I think hooks should be used, but that needs additional time to figure out
 -->
 
-
-
-<style>
-  @font-face {
-    font-family: 'icomoon';
-    src: url('styles/pretty-toolbar/icomoon.eot?-i2ywrq');
-    src: url('styles/pretty-toolbar/icomoon.eot?#iefix-i2ywrq') format('embedded-opentype'), url('styles/pretty-toolbar/icomoon.woff?-i2ywrq') format('woff'), url('styles/pretty-toolbar/icomoon.ttf?-i2ywrq') format('truetype'), url('styles/pretty-toolbar/icomoon.svg?-i2ywrq#icomoon') format('svg');
-    font-weight: normal;
-    font-style: normal;
-  }
-</style>
-
 <dom-module id="at-form-markdown">
   <template>
     <style include="at-form-common"></style>
     <style include="at-form-markdown-styles"></style>
-    <style include="pretty-toolbar-styles"></style>
-    <link rel="import" type="css" href="styles/prettify.css" />
+    <style include="prettify-styles"></style>
     <style>
-      #label {
-        font-weight: bold;
-        font-size: inherit;
-      }
-
-      #wmdButtonBar[disabled] {
+      #buttonToolbar[disabled] {
         pointer-events: none;
       }
 
@@ -67,28 +51,8 @@
         pointer-events: none;
       }
 
-      .hidden {
-        display: none;
-      }
-
-      .label-container.error {
-        color: var(--at-error-color);
-      }
-
-      .hint-container.error {
-        color: var(--at-error-color);
-      }
-
-      #field.field {
-        margin: 0;
-      }
-
-      #field.field.error {
-        margin: 0 0 2px;
-      }
-
       .carbon-icon-button {
-        width: 32px;
+        width: 32x;
         height: 32px;
         padding: 4px;
       }
@@ -96,49 +60,56 @@
       .carbon-icon-button:hover {
         @apply(--shadow-elevation-2dp);
       }
+
+      .button-toolbar {
+        display: inline-block;
+      }
+      .button-toolbar.hidden {
+        display: none;
+      }
+
     </style>
     <div id="atContainer" class="at-container">
-      <div id="field" class="field">
-        <iron-label id="label">{{label}}</iron-label>
-        <div id="contentContainer" class="wmd-box at-content-container" onload="prettyPrint()">
-          <div class="wmd-innerbox">
-            <div id="buttonToolbar">
-              <div id="editToolbar">
-                <at-carbon-icon-button id="btnBold" icon="now:bold" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnItalic" icon="now:italic" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnLink" icon="now:link" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnQuote" icon="now:quote" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnCode" icon="now:code" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnImage" icon="now:picture" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnOlist" icon="now:list-numbered" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnUlist" icon="now:list-bullets" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnHeading" icon="now:heading" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnUndo" icon="now:undo" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnRedo" icon="now:redo" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnPreview" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
-                <at-carbon-icon-button id="btnHelp" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
-              </div>
-              <div id="previewToolbar" class="hidden">
-                <at-carbon-icon-button title="Close preview" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
-              </div>
-              <div id="serviceToolbar">
-                <at-carbon-icon-button title="Toggle fullscreen" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
+      <iron-label id="label">{{label}}</iron-label>
+      <div id="contentContainer" class="wmd-box at-content-container" onload="prettyPrint()">
+        <div class="wmd-innerbox">
+          <div id="buttonToolbar">
+            <div id="editToolbar" class="button-toolbar">
+              <at-carbon-icon-button id="btnBold" icon="now:bold" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnItalic" icon="now:italic" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnLink" icon="now:link" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnQuote" icon="now:quote" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnCode" icon="now:code" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnImage" icon="now:picture" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnOlist" icon="now:list-numbered" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnUlist" icon="now:list-bullets" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnHeading" icon="now:heading" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnUndo" icon="now:undo" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnRedo" icon="now:redo" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnPreview" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnHelp" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
+            </div>
+            <div id="previewToolbar" class="button-toolbar hidden">
+              <at-carbon-icon-button id="btnHidePreview" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
+            </div>
+            <div id="serviceToolbar" class="button-toolbar">
+              <at-carbon-icon-button id="btnToggleFullscreen" icon="now:file" class="carbon-icon-button"></at-carbon-icon-button>
+            </div>
+          </div>
+          <div class="wmd-editor-box">
+            <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input at-content"></textarea>
+            <div id="markdownBottomText">
+              <div id="chromeText" style="display: none">Attach images by dragging and dropping,
+                <a id="chromeTextLink" href="javascript:void(0)">selecting them</a>, or pasting from the clipboard.</div>
+              <div id="nonChromeText" style="display: none">Attach images by dragging and dropping or
+                <a id="nonChromeTextLink" href="javascript:void(0)">selecting them</a>.</div>
+              <div style="display: none">
+                <input id="fileInput" type="file"/>
               </div>
             </div>
-            <div id="wmdButtonBar" class="wmd-button-bar"></div>
-            <div class="wmd-editor-box">
-              <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input at-content"></textarea>
-              <div id="markdownBottomText">
-                <div id="chromeText" style="display: none">Attach images by dragging and dropping, <a id="chromeTextLink" href="javascript:void(0)">selecting them</a>, or pasting from the clipboard.</div>
-                <div id="nonChromeText" style="display: none">Attach images by dragging and dropping or <a id="nonChromeTextLink" href="javascript:void(0)">selecting them</a>.</div>
-                <div style="display: none">
-                  <input id="fileInput" type="file" />
-                </div>
-              </div>
-            </div>
-            <div class="wmd-preview-box" style="display: none">
-              <div id="wmdPreview" class="wmd-panel wmd-preview"></div>
-            </div>
+          </div>
+          <div class="wmd-preview-box" style="display: none">
+            <div id="wmdPreview" class="wmd-panel wmd-preview"></div>
           </div>
         </div>
         <content id="shadow"></content>
@@ -150,13 +121,15 @@
 <script>
   "use strict";
 
-  window.isFunction = function(obj) {
+  window.isFunction = function (obj) {
     return Object.prototype.toString.call(obj) === "[Object Function]";
   }
 
   Polymer({
     is: 'at-form-markdown',
-    behaviors: [AtFormBehaviors.AtFormBehaviorsValidation],
+    behaviors: [
+      Tangere.behaviors.formValidation, Tangere.behaviors.i18n
+    ],
     _instanceVariables: {
       converter: undefined,
       mediaPicker: undefined
@@ -170,7 +143,7 @@
       },
       inlineAttachmentExtraParams: {
         type: Object,
-        value: function() {
+        value: function () {
           return {};
         },
         observer: 'inlineAttachmentExtraParamsChanged'
@@ -216,22 +189,24 @@
         observer: 'hideChanged'
       }
     },
-    $meta: [{
-      title: "Markdown",
-      type: "string",
-      xtype: "marked"
-    }],
-    hideChanged: function(newValue, oldValue) {
+    $meta: [
+      {
+        title: "Markdown",
+        type: "string",
+        xtype: "marked"
+      }
+    ],
+    hideChanged: function (newValue, oldValue) {
       var atContainer = this.$.atContainer;
       this.toggleClass('hidden', newValue, atContainer);
       if (this._isReady) {
         this.validate();
       }
     },
-    hideLabelChanged: function(newValue, oldValue) {
-      this.toggleClass("hidden", newValue, this.$.labelContainer);
+    hideLabelChanged: function (newValue, oldValue) {
+      this.toggleClass("hidden", newValue, this.$.label);
     },
-    ready: function(event) {
+    ready: function (event) {
       this._isReady = false;
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
       var shadowDistributedNodes = Polymer.dom(this.$.shadow).getDistributedNodes();
@@ -240,9 +215,7 @@
       for (var i = 0; i < shadowDistributedNodes.length; i++) {
         var node = shadowDistributedNodes[i];
         // *ij* subject to change but it makes sense that
-        if (node.id === "converter" // id of the element be "converter"
-          && node._converterInstance !== undefined // element should have a _converterInstance variable
-          && isFunction(node._converterInstance.makeHtml) // and _converterInstance should have makeHtml function
+        if (node.id === "converter" // id of the element be "converter" && node._converterInstance !== undefined // element should have a _converterInstance variable && isFunction(node._converterInstance.makeHtml) // and _converterInstance should have makeHtml function
         ) {
           this._instanceVariables.converter = node._converterInstance;
         }
@@ -251,8 +224,7 @@
         }
       }
 
-      // if desired converter was not set as textContent of the at-form-markdown
-      // create everything programatically since declarative doesn't work in IE
+      // if desired converter was not set as textContent of the at-form-markdown create everything programatically since declarative doesn't work in IE
 
       var defaultConverter = document.createElement('markdown-default-converter');
       // default converter doesn't have any configuration
@@ -273,12 +245,15 @@
       // 3) instantiate the Markdown.Editor
       var panelsCollection = {
         buttonBar: this.$.buttonToolbar,
+        editToolbar: this.$.editToolbar,
+        previewToolbar: this.$.previewToolbar,
+        serviceToolbar: this.$.serviceToolbar,
         preview: this.$.wmdPreview,
         input: this.$.wmdInput
       };
 
       var editor = new Markdown.Editor(converter, {
-        handler: function() {
+        handler: function () {
           window.open("http://daringfireball.net/projects/markdown/syntax");
         }
       }, panelsCollection, this.shadowRoot || this.shadyRoot);
@@ -306,7 +281,7 @@
       // 10) attach to wmdInput chage event to update component value
       var self = this;
       var inputProvider = this.$.wmdInput;
-      this.$.wmdInput.addEventListener('change', function(e) {
+      this.$.wmdInput.addEventListener('change', function (e) {
         var newValue = inputProvider.value;
         self.value = newValue;
         self.validate();
@@ -315,34 +290,35 @@
 
       this._isReady = true;
     },
-    focus: function() {
+    focus: function () {
       var valueProvider = this.$.wmdInput;
       valueProvider.focus();
     },
-    valueChanged: function(newValue, oldValue) {
+    valueChanged: function (newValue, oldValue) {
       this.$.wmdInput.value = newValue;
       if (this._isReady) {
         this.validate();
         this._fireValueChangedEvent(newValue);
       }
     },
-    _fireValueChangedEvent: function(newValue) {
-      this.fire('value-changed', {
-        value: newValue
-      });
+    _fireValueChangedEvent: function (newValue) {
+      this.fire('value-changed', {value: newValue});
     },
-    _updateUIValidState: function(isValid) {
+    _updateUIValidState: function (isValid) {
       this.toggleClass('error', !isValid, this.$.label);
       this.toggleClass('error', !isValid, this.$.contentContainer);
       this.toggleClass('error', !isValid, this.$.hint);
     },
-    disabledChanged: function(newValue, oldValue) {
+    disabledChanged: function (newValue, oldValue) {
+      var atContainer = this.$.atContainer;
+      this.toggleClass('disabled', newValue, atContainer);
+
       if (this.disabled) {
-        this.$.wmdButtonBar.setAttribute('disabled', 'true');
+        this.$.buttonToolbar.setAttribute('disabled', 'true');
         this.$.wmdInput.setAttribute('disabled', 'true');
         this.$.wmdInput.setAttribute('tabIndex', -1);
       } else {
-        this.$.wmdButtonBar.removeAttribute('disabled');
+        this.$.buttonToolbar.removeAttribute('disabled');
         this.$.wmdInput.removeAttribute('disabled');
         this.$.wmdInput.removeAttribute('tabIndex');
       }
@@ -350,7 +326,7 @@
         this.validate();
       }
     },
-    requiredChanged: function(newValue, oldValue) {
+    requiredChanged: function (newValue, oldValue) {
       if (this._isReady) {
         this.validate();
       }
@@ -358,7 +334,7 @@
     _getFocusableElement: function () {
       return this.$.wmdInput;
     },
-    inlineAttachmentUploadUrlChanged: function(oldValue, newValue) {
+    inlineAttachmentUploadUrlChanged: function (oldValue, newValue) {
       if (!this._isReady) {
         return;
       }
@@ -366,7 +342,7 @@
       this.__initializeBottomText();
       this._inlineAttachmentInstance.settings.uploadUrl = this.inlineAttachmentUploadUrl;
     },
-    inlineAttachmentJsonFieldNameChanged: function(oldValue, newValue) {
+    inlineAttachmentJsonFieldNameChanged: function (oldValue, newValue) {
       if (!this._isReady) {
         return;
       }
@@ -374,7 +350,7 @@
         this._inlineAttachmentInstance.settings.jsonFieldName = this.inlineAttachmentJsonFieldName;
       }
     },
-    inlineAttachmentExtraParamsChanged: function(oldValue, newValue) {
+    inlineAttachmentExtraParamsChanged: function (oldValue, newValue) {
       if (!this._isReady) {
         return;
       }
@@ -382,7 +358,7 @@
         this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
       }
     },
-    _initializeInlineAttachment: function() {
+    _initializeInlineAttachment: function () {
       if (this.inlineAttachmentUploadUrl === undefined || this.inlineAttachmentUploadUrl === '') {
         return;
       }
@@ -391,7 +367,7 @@
       this._inlineAttachmentInstance = inlineAttachment.editors.input.attachToInput(this.$.wmdInput, {
         uploadUrl: this.inlineAttachmentUploadUrl,
         jsonFieldName: this.inlineAttachmentJsonFieldName,
-        onFileUploadResponse: function(xhr) {
+        onFileUploadResponse: function (xhr) {
           var result = JSON.parse(xhr.responseText),
             filename = result[0][this.settings.jsonFieldName];
 
@@ -408,7 +384,7 @@
 
           return true;
         },
-        setupFormData: function(formData, file) {
+        setupFormData: function (formData, file) {
           // *ij* here "this" is the inline-attachment settings object
           var originalName = this.originalName;
           if (file.name != undefined && file.name.indexOf(".") > -1) {
@@ -422,11 +398,10 @@
       });
     },
 
-
     /*
      * initializes the text at the bottom of the component
      */
-    __initializeBottomText: function(event) {
+    __initializeBottomText: function (event) {
       var fileInput = this.$.fileInput;
       var textArea = this.$.wmdInput;
 
@@ -446,7 +421,7 @@
         var chromeText = this.$.chromeText;
         chromeText.style.display = "block";
         var chromeTextLink = this.$.chromeTextLink;
-        chromeTextLink.addEventListener('click', function(e) {
+        chromeTextLink.addEventListener('click', function (e) {
           fileInput.click();
           e.preventDefault();
         }, false);
@@ -455,13 +430,13 @@
         var nonChromeText = this.$.nonChromeText;
         nonChromeText.style.display = "block";
         var nonChromeTextLink = this.$.nonChromeTextLink;
-        nonChromeTextLink.addEventListener('click', function(e) {
+        nonChromeTextLink.addEventListener('click', function (e) {
           fileInput.click();
           e.preventDefault();
         }, false);
       }
 
-      fileInput.addEventListener('change', function(e) {
+      fileInput.addEventListener('change', function (e) {
         e.preventDefault();
         var dropEvent = document.createEvent('Event');
         dropEvent.initEvent('drop', true, true);
