@@ -1514,6 +1514,7 @@
           // close the fullscreen
           Polymer.dom(wmdBox).classList.remove('wmd-box-fullscreen');
           Polymer.dom(wmdInnerBox).classList.remove('wmd-innerbox-fullscreen');
+          buttons.toggleFullScreen.icon = "now:expand";
 
           body.classList.remove('hideOverflow');
           Polymer.dom(wmdButtonBar).classList.remove('wmd-button-bar-fullscreen');
@@ -1522,6 +1523,7 @@
           // open the fullscreen
           Polymer.dom(wmdBox).classList.add('wmd-box-fullscreen');
           Polymer.dom(wmdInnerBox).classList.add('wmd-innerbox-fullscreen');
+          buttons.toggleFullScreen.icon = "now:collapse";
 
           body.classList.add('hideOverflow');
           Polymer.dom(wmdButtonBar).classList.add('wmd-button-bar-fullscreen');
