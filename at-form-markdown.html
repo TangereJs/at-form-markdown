@@ -129,7 +129,8 @@
         type: String,
         value: '',
         observer: 'valueChanged',
-        xtype: "textarea"
+        xtype: "textarea",
+        title: 'Value'
       },
       inlineAttachmentExtraParams: {
         type: Object,
@@ -151,16 +152,19 @@
       disabled: {
         type: Boolean,
         value: false,
-        observer: 'disabledChanged'
+        observer: 'disabledChanged',
+        title: 'Field value can not be changed'
       },
       required: {
         type: Boolean,
         value: false,
-        observer: 'requiredChanged'
+        observer: 'requiredChanged',
+        title: 'Input requred'
       },
       label: {
         type: String,
-        value: ''
+        value: '',
+        title: 'Label'
       },
       hideLabel: {
         type: Boolean,
@@ -176,7 +180,8 @@
       hide: {
         type: Boolean,
         value: false,
-        observer: 'hideChanged'
+        observer: 'hideChanged',
+        title: 'Field is invisible'
       }
     },
     $meta: [
