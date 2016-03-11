@@ -89,10 +89,8 @@
           <div class="wmd-editor-box">
             <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input at-content"></textarea>
             <div id="markdownBottomText">
-              <div id="chromeText" style="display: none">Attach images by dragging and dropping,
-                <a id="chromeTextLink" href="javascript:void(0)">selecting them</a>, or pasting from the clipboard.</div>
-              <div id="nonChromeText" style="display: none">Attach images by dragging and dropping or
-                <a id="nonChromeTextLink" href="javascript:void(0)">selecting them</a>.</div>
+              <div id="chromeText" class="hidden"></div>
+              <div id="nonChromeText" class="hidden"></div>
               <div style="display: none">
                 <input id="fileInput" type="file" />
               </div>
@@ -441,35 +439,41 @@
       var fileInput = this.$.fileInput;
       var textArea = this.$.wmdInput;
 
+      var chromeText = this.$.chromeText;
+      var nonChromeText = this.$.nonChromeText;
+      var textContent = '';
+      var link = false;
+
       if (this.inlineAttachmentUploadUrl === undefined || this.inlineAttachmentUploadUrl === '') {
-        if (window.chrome !== undefined) {
-          var chromeText1 = this.$.chromeText;
-          chromeText1.style.display = "none";
-        } else {
-          var nonChromeText1 = this.$.nonChromeText;
-          nonChromeText1.style.display = "none";
-        }
+        this.toggleClass('hidden', true, chromeText);
+        this.toggleClass('hidden', true, nonChromeText);
         return;
       }
 
       if (window.chrome !== undefined) {
         // browser is google chrome
-        var chromeText = this.$.chromeText;
-        chromeText.style.display = "block";
-        var chromeTextLink = this.$.chromeTextLink;
-        chromeTextLink.addEventListener('click', function(e) {
-          fileInput.click();
-          e.preventDefault();
-        }, false);
+        textContent = this.T('Attach images by dragging and dropping, {0} selecting them {1}, or pasting from the clipboard.', '<a id="chromeLink" href="javascript:void(0)">', '</a>');
+        Polymer.dom(chromeText).innerHTML = textContent;
+        link = Polymer.dom(chromeText).querySelector('#chromeLink');
+        if (link) {
+          link.addEventListener('click', function(event) {
+            event.preventDefault();
+            fileInput.click();
+          });
+        }
+        this.toggleClass('hidden', false, chromeText);
       } else {
         // its some other browser
-        var nonChromeText = this.$.nonChromeText;
-        nonChromeText.style.display = "block";
-        var nonChromeTextLink = this.$.nonChromeTextLink;
-        nonChromeTextLink.addEventListener('click', function(e) {
-          fileInput.click();
-          e.preventDefault();
-        }, false);
+        textContent = this.T('Attach images by dragging and dropping or {0} selecting them {1}', '<a id="nonChromeLink" href="javascript:void(0)">', '</a>');
+        Polymer.dom(nonChromeText).innerHTML = textContent;
+        link = Polymer.dom(nonChromeText).querySelector('#nonChromeLink');
+        if (link) {
+          link.addEventListener('click', function(event) {
+            event.preventDefault();
+            fileInput.click();
+          });
+        }
+        this.toggleClass('hidden', false, nonChromeText);
       }
 
       fileInput.addEventListener('change', function(e) {
