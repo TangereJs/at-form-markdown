@@ -108,9 +108,11 @@
 
     if (typeof options.handler === "function") { //backwards compatible behavior
       options = {
-        helpButton: options
+        helpButton: options,
+        strings: options.strings || {}
       };
     }
+
     options.strings = options.strings || {};
     if (options.helpButton) {
       options.strings.help = options.strings.help || options.helpButton.title;
@@ -2255,10 +2257,17 @@
     previewBox.style.display = "inline-block";
     this.previewManager.TriggerPreviewRefresh();
 
-    // 3. hide the regular button bar - this bar is hidden via editorBox
-    panels.editToolbar.style.display = "none";
-    // 4. show the preview button bar with close preview button
-    panels.previewToolbar.style.display = "inline-block";
+    var buttonBar = panels.buttonBar;
+    var editButtons = Polymer.dom(buttonBar).querySelectorAll('at-carbon-icon-button[data-belongs-to=editToolbar]');
+    var previewButtons = Polymer.dom(buttonBar).querySelectorAll('at-carbon-icon-button[data-belongs-to=previewToolbar]');
+
+    editButtons.forEach(function (button, index) {
+      button.style.display = "none";
+    });
+
+    previewButtons.forEach(function (button, index) {
+      button.style.display = "inline-block";
+    });
   };
 
   commandProto.doHidePreview = function (chunks, postProcessing, panels) {
@@ -2269,9 +2278,17 @@
     editorBox.style.display = "inline-block";
     // 2. show the preview
     previewBox.style.display = "none";
-    // 3. show the regular button bar - this bar is hidden via editorBox
-    panels.editToolbar.style.display = "inline-block";
-    // 4. hide the preview button bar with close preview button
-    panels.previewToolbar.style.display = "none";
+
+    var buttonBar = panels.buttonBar;
+    var editButtons = Polymer.dom(buttonBar).querySelectorAll('at-carbon-icon-button[data-belongs-to=editToolbar]');
+    var previewButtons = Polymer.dom(buttonBar).querySelectorAll('at-carbon-icon-button[data-belongs-to=previewToolbar]');
+
+    editButtons.forEach(function (button, index) {
+      button.style.display = "inline-block";
+    });
+
+    previewButtons.forEach(function (button, index) {
+      button.style.display = "none";
+    });
   };
 })(window.Polymer);

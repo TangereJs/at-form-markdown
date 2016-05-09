@@ -64,27 +64,21 @@
       <div id="contentContainer" class="wmd-box at-content-container" onload="prettyPrint()">
         <div class="wmd-innerbox">
           <div id="buttonToolbar">
-            <div id="editToolbar" class="button-toolbar">
-              <at-carbon-icon-button id="btnBold" icon="now:bold" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnItalic" icon="now:italic" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnLink" icon="now:link" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnQuote" icon="now:quote" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnCode" icon="now:code" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnImage" icon="now:picture" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnOlist" icon="now:list-numbered" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnUlist" icon="now:list-bullets" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnHeading" icon="now:heading" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnUndo" icon="now:undo" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnRedo" icon="now:redo" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnPreview" icon="now:visible" class="carbon-icon-button"></at-carbon-icon-button>
-              <at-carbon-icon-button id="btnHelp" icon="now:help" class="carbon-icon-button"></at-carbon-icon-button>
-            </div>
-            <div id="previewToolbar" class="button-toolbar hidden">
-              <at-carbon-icon-button id="btnHidePreview" icon="now:edit" class="carbon-icon-button"></at-carbon-icon-button>
-            </div>
-            <div id="serviceToolbar" class="button-toolbar">
-              <at-carbon-icon-button id="btnToggleFullscreen" icon="now:expand" class="carbon-icon-button"></at-carbon-icon-button>
-            </div>
+              <at-carbon-icon-button id="btnBold" icon="now:bold" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnItalic" icon="now:italic" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnLink" icon="now:link" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnQuote" icon="now:quote" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnCode" icon="now:code" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnImage" icon="now:picture" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnOlist" icon="now:list-numbered" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnUlist" icon="now:list-bullets" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnHeading" icon="now:heading" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnUndo" icon="now:undo" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnRedo" icon="now:redo" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnPreview" icon="now:visible" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnHelp" icon="now:help" class="carbon-icon-button" data-belongs-to="editToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnHidePreview" icon="now:edit" class="carbon-icon-button hidden" data-belongs-to="previewToolbar"></at-carbon-icon-button>
+              <at-carbon-icon-button id="btnToggleFullscreen" icon="now:expand" class="carbon-icon-button" data-belongs-to="serviceToolbar"></at-carbon-icon-button>
           </div>
           <div class="wmd-editor-box">
             <textarea id="wmdInput" name$="{{name}}" rows="7" cols="80" class="wmd-input at-content"></textarea>
@@ -277,9 +271,6 @@
       // 3) instantiate the Markdown.Editor
       var panelsCollection = {
         buttonBar: this.$.buttonToolbar,
-        editToolbar: this.$.editToolbar,
-        previewToolbar: this.$.previewToolbar,
-        serviceToolbar: this.$.serviceToolbar,
         preview: this.$.wmdPreview,
         input: this.$.wmdInput
       };
@@ -287,7 +278,8 @@
       var editor = new Markdown.Editor(converter, {
         handler: function() {
           window.open("http://daringfireball.net/projects/markdown/syntax");
-        }
+        },
+        strings: localizedStrings
       }, panelsCollection, this.shadowRoot || this.shadyRoot);
 
       // 4) init the mediapicker hooks
