@@ -16,21 +16,21 @@
 <body>
   <div class="vertical layout">
     <div class="horizontal layout">
-      <at-form-markdown id="afMarkdown"></at-form-markdown>
+      <at-form-markdown id="afMarkdown" label="Optional markdown"></at-form-markdown>
     </div>
     <div class="horizontal layout">
-      <at-form-markdown id="afMarkdownRequired" required="true"></at-form-markdown>
+      <at-form-markdown id="afMarkdownRequired" required="true" label="Required markdown"></at-form-markdown>
     </div>
     <div class="horizontal layout">
-      <at-form-markdown id="afMarkdownDisabled" disabled="true"></at-form-markdown>
+      <at-form-markdown id="afMarkdownDisabled" disabled="true" label="Disabled markdown"></at-form-markdown>
     </div>
-    <div class="horizontal layout">
+    <div class="vertical layout">
       <h4>Hidden label demo</h4>
-      <at-form-markdown label="Demo label" hide-label="true"></at-form-markdown>      </div>
+      <at-form-markdown label="Demo label" hide-label="true"></at-form-markdown>
     </div>
   </div>
   <script>
-    document.addEventListener('WebComponentsReady', function (e) {
+    document.addEventListener('WebComponentsReady', function(e) {
       var markdown = document.getElementById('afMarkdown');
     });
   </script>
