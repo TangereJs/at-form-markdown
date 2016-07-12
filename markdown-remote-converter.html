@@ -1,4 +1,5 @@
-<link rel="import" href="../core-ajax/core-ajax.html" />
+<link rel="import" href="../tangere/tangere.html">
+<link rel="import" href="../at-core-activity/at-core-activity.html">
 
 <!--
     markdown-remote-converter is a polymer component for sending markdown markup to a remote service and getting the response
@@ -21,7 +22,7 @@
 
 <dom-module name="markdown-remote-converter">
   <template>
-    <core-ajax id="coreAjax" url="{{remoteUrl}}" on-response="{{coreResponse}}" on-error="{{coreError}}"></core-ajax>
+    <at-core-activity id="coreAjax" url="{{remoteUrl}}" on-response="{{coreResponse}}" on-error="{{coreError}}"></at-core-activity>
   </template>
 </dom-module>
 <script>
