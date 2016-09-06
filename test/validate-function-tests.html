@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+
+  <title>at-form-markdown tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../at-form-markdown.html">
+
+</head>
+<body>
+
+  <test-fixture id="validateFunctionTests">
+    <template>
+      <at-form-markdown></at-form-markdown>
+    </template>
+  </test-fixture>
+
+  <script>
+
+    suite('validate function tests', function() {
+
+      function isBoolean(obj) {
+        return Object.prototype.toString.call(obj) === "[object Boolean]";
+      }
+
+      test('validate function returns boolean false', function() {
+        var input = fixture('validateFunctionTests');
+        assert.equal(input.value, '', 'initial value not set correctly');
+        assert.equal(input.valid, true, 'element is initially invalid');
+
+        var result = input.validate();
+        assert.equal(isBoolean(result), true, 'validate return result is not of type Boolean');
+        assert.equal(result, true, 'element is invalid');
+      });
+
+      test('validate function returns boolean true', function() {
+        var input = fixture('validateFunctionTests');
+        input.required = true;
+        assert.equal(input.value, '', 'initial value not set correctly');
+        assert.equal(input.valid, false, 'element is initially invalid');
+
+        var result = input.validate();
+        assert.equal(isBoolean(result), true, 'validate return result is not of type Boolean');
+        assert.equal(result, false, 'element is invalid');
+      });
+
+    });
+  </script>
+
+</body>
+</html>

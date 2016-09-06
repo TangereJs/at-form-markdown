@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+<head>
+
+  <title>at-form-markdown tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../at-form-markdown.html">
+  <link rel="import" href="../../at-core-form/at-core-form.html">
+
+</head>
+<body>
+
+  <test-fixture id="coreFormEnterValidateOnKeypress">
+    <template>
+      <at-core-form></at-core-form>
+    </template>
+  </test-fixture>
+
+  <script>
+
+    suite('at-core-form-enter.keypress use case', function() {
+
+      function getSchema() {
+        return {
+          properties: {
+            text1: {
+              type: 'string'
+            }
+          }
+        };
+      }
+
+      function getData() {
+        return {
+          text1: 'lorem ipsum'
+        };
+      }
+
+      // helper function that figures out whether we are in shadowDOM or shadyDOM
+      function getDomMode(input) {
+        if (!input.shadowRoot) {
+          return 'shadyDOM';
+        }
+        return 'shadowDOM';
+      }
+
+      test('at-core-form-enter.keypress use case', function(done) {
+        /**
+         * Its not possible to create automated test that tests this usecase because of DOM API restrictions
+         * 7. ensure that validate() behaves like “blur” (so assign current input to .value, validate current input, ensure that focus is not lost). add test for this.
+         * 3. In at-core-form-enter.keypress handler its ok to display at-form-markdown.value event tough at-form-markdown.<input type=text>.value is being validated
+         * in keypress handler .value is old
+         * in keypress handler when form.validate() is called .value should be updated
+         * form.validate() will call validate() of all elements, so at-form-markdown.validate() should be adjusted
+         */
+        var coreForm = fixture('coreFormEnterValidateOnKeypress');
+        coreForm.schema = getSchema();
+        coreForm.data = getData();
+
+        assert.equal(schemaHelpers.areEqual(coreForm.schema, getSchema()), true, 'schema not set correctly');
+        assert.equal(schemaHelpers.areEqual(coreForm.data, getData()), true, 'data not set correctly');
+
+        var textInput = coreForm.getElement('text1');
+        var inputProvider = textInput._getFocusableElement();
+
+        coreForm.addEventListener('keypress', function(event) {
+
+            // event.which is deprecated and should not be used!
+          var keyCode = event.keyCode;
+          console.log(keyCode);
+          if (keyCode === 13) {
+            coreForm.validate();
+            var textInputValue = textInput.value;
+            var inputProviderValue = inputProvider.value;
+
+            // This aseert will always fail because in DOM API its not possible to insert characters into <input type=text> by dispatching events
+            assert.equal(inputProviderValue, "lorem ipsum delta");
+            // This aseert will always fail because in DOM API its not possible to insert characters into <input type=text> by dispatching events
+            assert.equal(textInputValue, "lorem ipsum delta");
+            // This aseert will always fail because in DOM API its not possible to insert characters into <input type=text> by dispatching events
+            assert.equal(coreForm.data.text1, "lorem ipsum delta");
+
+            var activeElement = document.activeElement;
+            // get correct activeElement if shadow DOM is used
+            if (getDomMode(textInput) === "shadowDOM") {
+              activeElement = textInput.shadowRoot.activeElement;
+            }
+            assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
+
+            done();
+          }
+
+        });
+
+        inputProvider.focus();
+        var activeElement = document.activeElement;
+        // get correct activeElement if shadow DOM is used
+        if (getDomMode(textInput) === "shadowDOM") {
+          activeElement = textInput.shadowRoot.activeElement;
+        }
+        assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
+
+        // in DOM API its not possible to insert characters into <input type=text> by dispatching events
+        // so coreForm, at-form-markdown and at-form-markdown.$.input detect these events but at-form-markdown.$.input value is not updated
+        // MockInteractions uses Custom Events
+        // Creating KeyEvent or KeyboardEvent and dispatching them produces the same result as CustomEvent
+        MockInteractions.keyEventOn(inputProvider, 'keypress', 32, ' ');
+        inputProvider.value = inputProvider.value + " ";
+        MockInteractions.keyEventOn(inputProvider, 'keypress', 100, 'd');
+        inputProvider.value = inputProvider.value + "d";
+        MockInteractions.keyEventOn(inputProvider, 'keypress', 101, 'e');
+        inputProvider.value = inputProvider.value + "e";
+        MockInteractions.keyEventOn(inputProvider, 'keypress', 108, 'l');
+        inputProvider.value = inputProvider.value + "l";
+        MockInteractions.keyEventOn(inputProvider, 'keypress', 116, 't');
+        inputProvider.value = inputProvider.value + "t";
+        MockInteractions.keyEventOn(inputProvider, 'keypress', 97, 'a');
+        inputProvider.value = inputProvider.value + "a";
+
+        MockInteractions.keyEventOn(inputProvider, 'keypress', 13, 'ENTER');
+      });
+
+
+      test('at-core-form-enter.keypress use case where only enter is simulated', function(done) {
+        /**
+         * Its not possible to create automated test that tests this usecase because of DOM API restrictions
+         * 7. ensure that validate() behaves like “blur” (so assign current input to .value, validate current input, ensure that focus is not lost). add test for this.
+         * 3. In at-core-form-enter.keypress handler its ok to display at-form-markdown.value event tough at-form-markdown.<input type=text>.value is being validated
+         * in keypress handler .value is old
+         * in keypress handler when form.validate() is called .value should be updated
+         * form.validate() will call validate() of all elements, so at-form-markdown.validate() should be adjusted
+         */
+        var coreForm = fixture('coreFormEnterValidateOnKeypress');
+        coreForm.schema = getSchema();
+        coreForm.data = getData();
+
+        assert.equal(schemaHelpers.areEqual(coreForm.schema, getSchema()), true, 'schema not set correctly');
+        assert.equal(schemaHelpers.areEqual(coreForm.data, getData()), true, 'data not set correctly');
+
+        var textInput = coreForm.getElement('text1');
+        var inputProvider = textInput._getFocusableElement();
+
+        coreForm.addEventListener('keypress', function(event) {
+
+            // event.which is deprecated and should not be used!
+          var keyCode = event.keyCode;
+          console.log(keyCode);
+          if (keyCode === 13) {
+            coreForm.validate();
+            var textInputValue = textInput.value;
+            var inputProviderValue = inputProvider.value;
+
+            // These asserts will pass because inputProvider value is updated by setting a new value to inputProvider.value property
+            assert.equal(inputProviderValue, "lorem ipsum delta");
+            assert.equal(textInputValue, "lorem ipsum delta");
+            assert.equal(coreForm.data.text1, "lorem ipsum delta");
+
+            var activeElement = document.activeElement;
+            // get correct activeElement if shadow DOM is used
+            if (getDomMode(textInput) === "shadowDOM") {
+              activeElement = textInput.shadowRoot.activeElement;
+            }
+            assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
+
+            done();
+          }
+
+        });
+
+        inputProvider.focus();
+        var activeElement = document.activeElement;
+        // get correct activeElement if shadow DOM is used
+        if (getDomMode(textInput) === "shadowDOM") {
+          activeElement = textInput.shadowRoot.activeElement;
+        }
+        assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
+
+        inputProvider.value = "lorem ipsum delta";
+
+        MockInteractions.keyEventOn(inputProvider, 'keypress', 13, 'ENTER');
+      });
+
+    });
+  </script>
+
+</body>
+</html>

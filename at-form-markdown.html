@@ -9,13 +9,15 @@
 
 <link rel="import" href="../at-theme/at-theme.html">
 <link rel="import" href="../at-i18n/at-i18n-behavior.html">
-<link rel="import" href="../at-form-behaviors/at-form-behaviors-validation.html">
+<link rel="import" href="../at-form-behaviors/at-form-behaviors.html">
 <link rel="import" href="../at-carbon-icon-button/at-carbon-icon-button.html">
 <link rel="import" href="../iron-label/iron-label.html">
 <link rel="import" href="markdown-default-converter.html" />
 <link rel="import" href="markdown-sanitizing-decorator/markdown-sanitizing-decorator.html" />
 <link rel="import" href="styles/at-form-markdown-styles.html">
 <link rel="import" href="styles/prettify-styles.html">
+<link rel="import" href="at-form-markdown-input-validation.html">
+
 <!--
     at-form-markdown is a polymer component for markdown markup
     @properties
@@ -103,58 +105,14 @@
   </template>
 </dom-module>
 <script>
-  "use strict";
-
-  window.isFunction = function(obj) {
-    return Object.prototype.toString.call(obj) === "[object Function]";
-  }
-
   Polymer({
     is: 'at-form-markdown',
-    behaviors: [
-      Tangere.behaviors.formValidation, Tangere.behaviors.i18n
-    ],
+    behaviors: [ Tangere.behaviors.i18n, Tangere.behaviors.formUIGeneric, Tangere.behaviors.AtFormMarkdownInputValidation ],
     _instanceVariables: {
       converter: undefined,
       mediaPicker: undefined
     },
     properties: {
-      value: {
-        type: String,
-        value: '',
-        observer: 'valueChanged',
-        xtype: "textarea",
-        title: 'Value'
-      },
-      inlineAttachmentExtraParams: {
-        type: Object,
-        value: function() {
-          return {};
-        },
-        observer: 'inlineAttachmentExtraParamsChanged'
-      },
-      inlineAttachmentUploadUrl: {
-        type: String,
-        value: '',
-        observer: 'inlineAttachmentUploadUrlChanged'
-      },
-      inlineAttachmentJsonFieldName: {
-        type: String,
-        value: '',
-        observer: 'inlineAttachmentJsonFieldNameChanged'
-      },
-      disabled: {
-        type: Boolean,
-        value: false,
-        observer: 'disabledChanged',
-        title: 'Field value can not be changed'
-      },
-      required: {
-        type: Boolean,
-        value: false,
-        observer: 'requiredChanged',
-        title: 'Input required'
-      },
       label: {
         type: String,
         value: '',
@@ -163,9 +121,17 @@
       hideLabel: {
         type: Boolean,
         value: false,
-        observer: 'hideLabelChanged',
+        observer: '_hideLabelChanged',
         title: 'Do not show the label'
       },
+
+      disabled: {
+        type: Boolean,
+        value: false,
+        observer: '_disabledChanged',
+        title: 'Field value can not be changed'
+      },
+
       /**
        * Hides the element. When hidden nothing is displayed for the element
        * @property hide
@@ -175,26 +141,65 @@
       hide: {
         type: Boolean,
         value: false,
-        observer: 'hideChanged',
+        observer: '_hideChanged',
         title: 'Field is invisible'
+      },
+
+      required: {
+        type: Boolean,
+        value: false,
+        title: 'Input required'
+      },
+
+      value: {
+        type: String,
+        value: '',
+        observer: '_valueChanged',
+        xtype: "textarea",
+        title: 'Value'
+      },
+
+      inlineAttachmentExtraParams: {
+        type: Object,
+        value: function() {
+          return {};
+        },
+        observer: '_inlineAttachmentExtraParamsChanged'
+      },
+
+      inlineAttachmentUploadUrl: {
+        type: String,
+        value: '',
+        observer: '_inlineAttachmentUploadUrlChanged'
+      },
+
+      inlineAttachmentJsonFieldName: {
+        type: String,
+        value: '',
+        observer: '_inlineAttachmentJsonFieldNameChanged'
       }
     },
+
+    observers: [
+      '_internalUpdateValidState(disabled, hide, required)'
+    ],
+
     $meta: [{
       title: "Markdown",
       type: "string",
       xtype: "marked"
     }],
-    hideChanged: function(newValue, oldValue) {
-      var atContainer = this.$.atContainer;
-      this.toggleClass('hidden', newValue, atContainer);
-      if (this._isReady) {
-        this.validate();
-      }
-    },
-    hideLabelChanged: function(newValue, oldValue) {
+
+    _hideLabelChanged: function(newValue, oldValue) {
       this.toggleClass("hidden", newValue, this.$.label);
     },
+
     ready: function(event) {
+
+      function isFunction(obj) {
+        return Object.prototype.toString.call(obj) === "[object Function]";
+      }
+
       this._isReady = false;
       // 1) Look at the shadow distributed nodes and find instances of converter and media picker instances
       var shadowDistributedNodes = Polymer.dom(this.$.shadow).getDistributedNodes();
@@ -308,36 +313,13 @@
       var self = this;
       var inputProvider = this.$.wmdInput;
       this.$.wmdInput.addEventListener('change', function(e) {
-        var newValue = inputProvider.value;
-        self.value = newValue;
         self.validate();
-        self._fireValueChangedEvent(newValue);
       });
 
       this._isReady = true;
     },
-    focus: function() {
-      var valueProvider = this.$.wmdInput;
-      valueProvider.focus();
-    },
-    valueChanged: function(newValue, oldValue) {
-      this.$.wmdInput.value = newValue;
-      if (this._isReady) {
-        this.validate();
-        this._fireValueChangedEvent(newValue);
-      }
-    },
-    _fireValueChangedEvent: function(newValue) {
-      this.fire('value-changed', {
-        value: newValue
-      });
-    },
-    _updateUIValidState: function(isValid) {
-      this.toggleClass('error', !isValid, this.$.label);
-      this.toggleClass('error', !isValid, this.$.contentContainer);
-      this.toggleClass('error', !isValid, this.$.hint);
-    },
-    disabledChanged: function(newValue, oldValue) {
+
+    _disabledChanged: function(newValue, oldValue) {
       var atContainer = this.$.atContainer;
       this.toggleClass('disabled', newValue, atContainer);
 
@@ -350,19 +332,72 @@
         this.$.wmdInput.removeAttribute('disabled');
         this.$.wmdInput.removeAttribute('tabIndex');
       }
+    },
+
+    _hideChanged: function(newValue, oldValue) {
+      var atContainer = this.$.atContainer;
+      this.toggleClass('hidden', newValue, atContainer);
+    },
+
+    _internalUpdateValidState: function(disabled, hide, required) {
       if (this._isReady) {
         this.validate();
       }
     },
-    requiredChanged: function(newValue, oldValue) {
+
+    _valueChanged: function(newValue, oldValue) {
+      var valueProvider = this.$.wmdInput;
+
+      if (newValue === null) {
+        // if user sets at-form-markdown.value to null input should display initial value which is empty string
+        valueProvider.value = this.properties.value.value;
+      } else {
+        valueProvider.value = newValue;
+      }
+
       if (this._isReady) {
-        this.validate();
+        this._fireValueChangedEvent(newValue);
       }
     },
+
+    validate: function (showError) {
+      if(showError === undefined) showError = this.autovalidate;
+
+      // validate must validate the current value
+      var inputValue = this.$.wmdInput.value;
+
+      if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
+        this.value = inputValue;
+      }
+
+      var validationResult = this._validateBaseData();
+      if(showError) this._handleValidationResult(validationResult);
+      if (validationResult.isFinal) {
+        return validationResult.isValid;
+      }
+
+      validationResult = this._validateData(this, this.value, this.T.bind(this));
+      if(showError) this._handleValidationResult(validationResult);
+
+      return validationResult.isValid;
+    },
+
+    _updateUIValidState: function(isValid) {
+      this.toggleClass('error', !isValid, this.$.label);
+      this.toggleClass('error', !isValid, this.$.contentContainer);
+      this.toggleClass('error', !isValid, this.$.hint);
+    },
+
+    focus: function() {
+      var valueProvider = this.$.wmdInput;
+      valueProvider.focus();
+    },
+
     _getFocusableElement: function() {
       return this.$.wmdInput;
     },
-    inlineAttachmentUploadUrlChanged: function(oldValue, newValue) {
+
+    _inlineAttachmentUploadUrlChanged: function(oldValue, newValue) {
       if (!this._isReady) {
         return;
       }
@@ -370,7 +405,8 @@
       this.__initializeBottomText();
       this._inlineAttachmentInstance.settings.uploadUrl = this.inlineAttachmentUploadUrl;
     },
-    inlineAttachmentJsonFieldNameChanged: function(oldValue, newValue) {
+
+    _inlineAttachmentJsonFieldNameChanged: function(oldValue, newValue) {
       if (!this._isReady) {
         return;
       }
@@ -378,7 +414,8 @@
         this._inlineAttachmentInstance.settings.jsonFieldName = this.inlineAttachmentJsonFieldName;
       }
     },
-    inlineAttachmentExtraParamsChanged: function(oldValue, newValue) {
+
+    _inlineAttachmentExtraParamsChanged: function(oldValue, newValue) {
       if (!this._isReady) {
         return;
       }
@@ -386,6 +423,7 @@
         this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
       }
     },
+
     _initializeInlineAttachment: function() {
       if (this.inlineAttachmentUploadUrl === undefined || this.inlineAttachmentUploadUrl === '') {
         return;

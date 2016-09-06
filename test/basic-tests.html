@@ -70,12 +70,14 @@
   </test-fixture>
 
   <script>
+
     suite('basic', function() {
 
       test('setting value sets the input value', function() {
         var input = fixture('basic');
         input.value = 'demo value';
-        assert.equal(input._getFocusableElement().value, input.value, 'inputElement.value equals input.value');
+        var inputElement = input._getFocusableElement();
+        assert.equal(inputElement.value, "demo value", 'inputElement.value equals input.value');
       });
 
       test('required sets validation message', function() {
@@ -88,6 +90,9 @@
       });
 
       test('disabled sets css classes', function() {
+        // this test will fail in firefox because of https://github.com/Polymer/polymer/issues/1936
+        // and https://bugzilla.mozilla.org/show_bug.cgi?id=889376
+
         var input = fixture('disabled');
         assert.equal(input.disabled, true, 'disabled property is true');
         var inputElement = input._getFocusableElement();
@@ -102,6 +107,10 @@
       });
 
       test('required and disabled => valid = true', function() {
+        // this test will fail in firefox because of https://github.com/Polymer/polymer/issues/1936
+        // and https://bugzilla.mozilla.org/show_bug.cgi?id=889376
+
+
         var input = fixture('requiredAndDisabled');
         assert.equal(input.required, true, 'required property is true');
         assert.equal(input.disabled, true, 'disabled property is true');
@@ -118,7 +127,7 @@
       test('errorMessage => valid = false', function() {
         var input = fixture('errorMessageValidFalse');
         assert.equal(input.errorMessage, 'demo error message', 'error message is correctly set');
-        assert.equal(input.valid, true, 'input is valid because error message is set as attribute');
+        assert.equal(input.valid, false, 'input is valid because error message is set as attribute');
         input.errorMessage = 'Another version of demo error message';
         assert.equal(input.errorMessage, 'Another version of demo error message', 'error message is correctly set');
         assert.equal(input.valid, false, 'input is invalid because error message is set as property');

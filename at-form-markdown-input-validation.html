@@ -1,0 +1,175 @@
+<link rel="import" href="../tangere/tangere.html">
+
+<script>
+
+  Tangere.behaviors.AtFormMarkdownInputValidation = {
+
+    /*
+      Since its desired to use _validateData outside of at-form-markdown, eg. in BOT
+      other environments must supply their own localization
+    */
+
+    _validateData: function (schema, value, /* localizer */localizer) {
+
+      function isFunction(obj) {
+        return Object.prototype.toString.call(obj) === "[object Function]";
+      }
+
+      function isObject(obj) {
+        return Object.prototype.toString.call(obj) === "[object Object]";
+      }
+
+      function isBoolean(obj) {
+        return Object.prototype.toString.call(obj) === "[object Boolean]";
+      }
+
+      function isNumber(obj) {
+        return Object.prototype.toString.call(obj) === "[object Number]";
+      }
+
+      function isHTMLElement(obj) {
+        return Object.prototype.toString.call(obj) === "[object HTMLElement]";
+      }
+
+      function isHTMLUnknownElement(obj) {
+        return Object.prototype.toString.call(obj) === "[object HTMLUnknownElement]";
+      }
+
+      function format(format) {
+
+        var args_ = Array.prototype.slice.call(arguments, 1);
+
+        // replace {n}
+        var fmt = format.replace(/{(\d+)}/g, function (match, number) {
+          return typeof args_[number] != 'undefined' ? args_[number] : match;
+        });
+
+        // replace [n]
+        fmt = fmt.replace(/\[(\d+)\]/g, function (match, number) {
+          return typeof args_[number] != 'undefined' ? args_[number] : match;
+        });
+
+        return fmt;
+      }
+
+      if (!isFunction(localizer)) {
+        localizer = format;
+      }
+
+
+      // validation functions from behaviors will return validation result objects
+      var validationResult = {
+        isValid: true, // isValid is true if constraints checked in validation function are satisfied; false otherwise
+        errorMessage: "" // errorMessage is empty string if isValid is true; errorMessage contains error message text is isValid is false
+      };
+
+      // validate input parameters
+      // validate input parameters
+      // schema must be object
+      // @isHTMLUnknownElement(schema) thank you IE11 and Safari for not supporting custom elements. Thank you very much ...
+      validationResult.isValid = isObject(schema) || ((isHTMLUnknownElement(schema) || isHTMLElement(schema)) && schema.is === "at-form-markdown");
+      if (!validationResult.isValid) {
+        validationResult.errorMessage = localizer("schema is not an object.")
+        return validationResult;
+      }
+
+      //schema must have properties object
+      validationResult.isValid = isObject(schema.properties);
+      if (!validationResult.isValid) {
+        validationResult.errorMessage = localizer("schema.properties is not an object.")
+        return validationResult;
+      }
+
+      //schema.properties must have value property and value property must be an object
+      validationResult.isValid = isObject(schema.properties.value);
+      if (!validationResult.isValid) {
+        validationResult.errorMessage = localizer("schema.properties.value is not an object.")
+        return validationResult;
+      }
+
+      //schema.properties.value must have type property and type property must be a function
+      validationResult.isValid = isFunction(schema.properties.value.type);
+      if (!validationResult.isValid) {
+        validationResult.errorMessage = localizer("schema.properties.value.type is not a function.")
+        return validationResult;
+      }
+
+      // schema must have required property and required must be boolean
+      validationResult.isValid = isBoolean(schema.required);
+      if (!validationResult.isValid) {
+        validationResult.errorMessage = localizer("schema.required is not a boolean value.")
+        return validationResult;
+      }
+
+      /*
+        2. check data type
+        value assigned must match type specified in at-form-markdown.properties.value.type
+      */
+      /*
+        TAG P2
+      */
+      validationResult = _validateValueType(schema.properties.value, value, localizer);
+      if (!validationResult.isValid) {
+        return validationResult;
+      }
+
+      /*
+        3. check required
+        if required check fails validating anything else is meaningless
+      */
+      /*
+        TAG P3
+      */
+      validationResult = _validateRequired(schema.required, value, localizer);
+
+      return validationResult;
+
+      function _validateValueType(valueSchema, valueObj, localizer) {
+        function getTypeString(obj) {
+          return  Object.prototype.toString.call(obj);
+        }
+
+        var validationResult = {
+          isValid: true,
+          errorMessage: ""
+        };
+
+        // calculate type strings for valueObj and object that is returned from valueSchema.type function
+        // valueSchema.type function comes from at-form-markdown.properties.value.type
+        var schemaTypeString = getTypeString(valueSchema.type());
+        var nullTypeString = getTypeString(null);
+        var valueObjTypeString = getTypeString(valueObj);
+
+        validationResult.isValid = (schemaTypeString === valueObjTypeString) || (nullTypeString === valueObjTypeString);
+        if (!validationResult.isValid) {
+          validationResult.errorMessage = localizer("Type specified in schema doesn't match type of value object for property value. Expected {0} to match {1}", schemaTypeString, valueObjTypeString);
+        }
+
+        return validationResult;
+      }
+
+      /**
+        @function _validateRequired
+        @return by default return value !== ""; this works for at-form-[ codemirror, date, daterange, lookup, markdown, number, password, radio, state, text and textarea ]
+        override in at-form-checkbox to always return true
+        override in at-form-file and at-from-image as is already implemented (see at-form-file Line 356 and at-form-image Line 450)
+      */
+      function _validateRequired(required, value, localizer) {
+        var validationResult = {
+          isValid: true,
+          errorMessage: ""
+        };
+        var required_ = Boolean(required);
+
+        // if required is true return true if value is not undefined, null or ""
+        validationResult.isValid = !required_ || ([undefined, null, ""].indexOf(value) === -1);
+        if (!validationResult.isValid) {
+          validationResult.errorMessage = localizer("This field is required.");
+        }
+
+        return validationResult;
+      }
+    }
+  };
+
+</script>
