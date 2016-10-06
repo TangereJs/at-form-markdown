@@ -356,6 +356,8 @@
         valueProvider.value = newValue;
       }
 
+      if (this.autoValidate) { this._validate(true); }
+
       if (this._isReady) {
         this._fireValueChangedEvent(newValue);
       }
@@ -371,8 +373,12 @@
         this.value = inputValue;
       }
 
+      return this._validate(showError);
+    },
+
+    _validate: function (showError) {
       var validationResult = this._validateBaseData();
-      if(showError) this._handleValidationResult(validationResult);
+      this._handleValidationResult(validationResult);
       if (!validationResult.isValid) {
         return validationResult.isValid;
       }
