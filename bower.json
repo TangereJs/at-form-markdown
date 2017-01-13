@@ -2,15 +2,15 @@
   "name": "at-form-markdown",
   "private": true,
   "dependencies": {
-    "tangere": "TangereJs/tangere#0.8-preview",
-    "at-theme": "TangereJs/at-theme#0.8-preview",
-    "at-i18n": "TangereJs/at-i18n#0.8-preview",
-    "at-form-behaviors": "TangereJs/at-form-behaviors#0.8-preview",
+    "tangere": "TangereJs/tangere#master",
+    "at-theme": "TangereJs/at-theme#master",
+    "at-i18n": "TangereJs/at-i18n#master",
+    "at-form-behaviors": "TangereJs/at-form-behaviors#master",
     "at-carbon-icon-button": "TangereJs/at-carbon-icon-button#master",
     "iron-label": "PolymerElements/iron-label#master",
-    "at-core-markdown": "TangereJs/at-core-markdown#0.8-preview",
-    "at-core-activity": "TangereJs/at-core-activity#0.8-preview",
-    "at-doc-viewer": "TangereJs/at-doc-viewer#0.8-preview",
+    "at-core-markdown": "TangereJs/at-core-markdown#master",
+    "at-core-activity": "TangereJs/at-core-activity#master",
+    "at-doc-viewer": "TangereJs/at-doc-viewer#master",
     "layout": "Polymer/layout#master"
   },
   "version": "0.0.0.4"
