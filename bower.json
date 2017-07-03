@@ -11,7 +11,7 @@
     "at-core-markdown": "TangereJs/at-core-markdown#master",
     "at-core-activity": "TangereJs/at-core-activity#master",
     "at-doc-viewer": "TangereJs/at-doc-viewer#master",
-    "layout": "Polymer/layout#master"
+    "layout": "TangereJs/layout#master"
   },
   "version": "0.0.0.4"
 }
