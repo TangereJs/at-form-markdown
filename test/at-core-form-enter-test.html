@@ -69,65 +69,67 @@
 
         assert.equal(schemaHelpers.areEqual(coreForm.schema, getSchema()), true, 'schema not set correctly');
         assert.equal(schemaHelpers.areEqual(coreForm.data, getData()), true, 'data not set correctly');
+        
+        coreForm.addEventListener('rendered', function() { 
+          var textInput = coreForm.getElement('text1');
+          var inputProvider = textInput._getFocusableElement();
 
-        var textInput = coreForm.getElement('text1');
-        var inputProvider = textInput._getFocusableElement();
-
-        coreForm.addEventListener('keypress', function(event) {
-
+          coreForm.addEventListener('keypress', function(event) {
             // event.which is deprecated and should not be used!
-          var keyCode = event.keyCode;
-          console.log(keyCode);
-          if (keyCode === 13) {
-            coreForm.validate();
-            var textInputValue = textInput.value;
-            var inputProviderValue = inputProvider.value;
+            var keyCode = event.keyCode;
+            console.log(keyCode);
+            if (keyCode === 13) {
+              coreForm.validate();
+              var textInputValue = textInput.value;
+              var inputProviderValue = inputProvider.value;
 
-            // This aseert will always fail because in DOM API its not possible to insert characters into <input type=text> by dispatching events
-            assert.equal(inputProviderValue, "lorem ipsum delta");
-            // This aseert will always fail because in DOM API its not possible to insert characters into <input type=text> by dispatching events
-            assert.equal(textInputValue, "lorem ipsum delta");
-            // This aseert will always fail because in DOM API its not possible to insert characters into <input type=text> by dispatching events
-            assert.equal(coreForm.data.text1, "lorem ipsum delta");
+              // This aseert will always fail because in DOM API its not possible to insert characters into <input type=text> by dispatching events
+              assert.equal(inputProviderValue, "lorem ipsum delta");
+              // This aseert will always fail because in DOM API its not possible to insert characters into <input type=text> by dispatching events
+              assert.equal(textInputValue, "lorem ipsum delta");
+              // This aseert will always fail because in DOM API its not possible to insert characters into <input type=text> by dispatching events
+              assert.equal(coreForm.data.text1, "lorem ipsum delta");
 
-            var activeElement = document.activeElement;
-            // get correct activeElement if shadow DOM is used
-            if (getDomMode(textInput) === "shadowDOM") {
-              activeElement = textInput.shadowRoot.activeElement;
+              var activeElement = document.activeElement;
+              // get correct activeElement if shadow DOM is used
+              if (getDomMode(textInput) === "shadowDOM") {
+                activeElement = textInput.shadowRoot.activeElement;
+              }
+              assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
+
+              done();
             }
-            assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
+          });
 
-            done();
+          inputProvider.focus();
+          var activeElement = document.activeElement;
+          // get correct activeElement if shadow DOM is used
+          if (getDomMode(textInput) === "shadowDOM") {
+            activeElement = textInput.shadowRoot.activeElement;
           }
+          assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
+
+          // in DOM API its not possible to insert characters into <input type=text> by dispatching events
+          // so coreForm, at-form-markdown and at-form-markdown.$.input detect these events but at-form-markdown.$.input value is not updated
+          // MockInteractions uses Custom Events
+          // Creating KeyEvent or KeyboardEvent and dispatching them produces the same result as CustomEvent
+          MockInteractions.keyEventOn(inputProvider, 'keypress', 32, ' ');
+          inputProvider.value = inputProvider.value + " ";
+          MockInteractions.keyEventOn(inputProvider, 'keypress', 100, 'd');
+          inputProvider.value = inputProvider.value + "d";
+          MockInteractions.keyEventOn(inputProvider, 'keypress', 101, 'e');
+          inputProvider.value = inputProvider.value + "e";
+          MockInteractions.keyEventOn(inputProvider, 'keypress', 108, 'l');
+          inputProvider.value = inputProvider.value + "l";
+          MockInteractions.keyEventOn(inputProvider, 'keypress', 116, 't');
+          inputProvider.value = inputProvider.value + "t";
+          MockInteractions.keyEventOn(inputProvider, 'keypress', 97, 'a');
+          inputProvider.value = inputProvider.value + "a";
+
+          MockInteractions.keyEventOn(inputProvider, 'keypress', 13, 'ENTER');
 
         });
 
-        inputProvider.focus();
-        var activeElement = document.activeElement;
-        // get correct activeElement if shadow DOM is used
-        if (getDomMode(textInput) === "shadowDOM") {
-          activeElement = textInput.shadowRoot.activeElement;
-        }
-        assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
-
-        // in DOM API its not possible to insert characters into <input type=text> by dispatching events
-        // so coreForm, at-form-markdown and at-form-markdown.$.input detect these events but at-form-markdown.$.input value is not updated
-        // MockInteractions uses Custom Events
-        // Creating KeyEvent or KeyboardEvent and dispatching them produces the same result as CustomEvent
-        MockInteractions.keyEventOn(inputProvider, 'keypress', 32, ' ');
-        inputProvider.value = inputProvider.value + " ";
-        MockInteractions.keyEventOn(inputProvider, 'keypress', 100, 'd');
-        inputProvider.value = inputProvider.value + "d";
-        MockInteractions.keyEventOn(inputProvider, 'keypress', 101, 'e');
-        inputProvider.value = inputProvider.value + "e";
-        MockInteractions.keyEventOn(inputProvider, 'keypress', 108, 'l');
-        inputProvider.value = inputProvider.value + "l";
-        MockInteractions.keyEventOn(inputProvider, 'keypress', 116, 't');
-        inputProvider.value = inputProvider.value + "t";
-        MockInteractions.keyEventOn(inputProvider, 'keypress', 97, 'a');
-        inputProvider.value = inputProvider.value + "a";
-
-        MockInteractions.keyEventOn(inputProvider, 'keypress', 13, 'ENTER');
       });
 
 
@@ -147,49 +149,49 @@
         assert.equal(schemaHelpers.areEqual(coreForm.schema, getSchema()), true, 'schema not set correctly');
         assert.equal(schemaHelpers.areEqual(coreForm.data, getData()), true, 'data not set correctly');
 
-        var textInput = coreForm.getElement('text1');
-        var inputProvider = textInput._getFocusableElement();
+        coreForm.addEventListener('rendered', function(){ 
 
-        coreForm.addEventListener('keypress', function(event) {
+          var textInput = coreForm.getElement('text1');
+          var inputProvider = textInput._getFocusableElement();
 
+          coreForm.addEventListener('keypress', function(event) {
             // event.which is deprecated and should not be used!
-          var keyCode = event.keyCode;
-          console.log(keyCode);
-          if (keyCode === 13) {
-            coreForm.validate();
-            var textInputValue = textInput.value;
-            var inputProviderValue = inputProvider.value;
+            var keyCode = event.keyCode;
+            console.log(keyCode);
+            if (keyCode === 13) {
+              coreForm.validate();
+              var textInputValue = textInput.value;
+              var inputProviderValue = inputProvider.value;
 
-            // These asserts will pass because inputProvider value is updated by setting a new value to inputProvider.value property
-            assert.equal(inputProviderValue, "lorem ipsum delta");
-            assert.equal(textInputValue, "lorem ipsum delta");
-            assert.equal(coreForm.data.text1, "lorem ipsum delta");
+              // These asserts will pass because inputProvider value is updated by setting a new value to inputProvider.value property
+              assert.equal(inputProviderValue, "lorem ipsum delta");
+              assert.equal(textInputValue, "lorem ipsum delta");
+              assert.equal(coreForm.data.text1, "lorem ipsum delta");
 
-            var activeElement = document.activeElement;
-            // get correct activeElement if shadow DOM is used
-            if (getDomMode(textInput) === "shadowDOM") {
-              activeElement = textInput.shadowRoot.activeElement;
+              var activeElement = document.activeElement;
+              // get correct activeElement if shadow DOM is used
+              if (getDomMode(textInput) === "shadowDOM") {
+                activeElement = textInput.shadowRoot.activeElement;
+              }
+              assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
+
+              done();
             }
-            assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
+          });
 
-            done();
+          inputProvider.focus();
+          var activeElement = document.activeElement;
+          // get correct activeElement if shadow DOM is used
+          if (getDomMode(textInput) === "shadowDOM") {
+            activeElement = textInput.shadowRoot.activeElement;
           }
+          assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
 
+          inputProvider.value = "lorem ipsum delta";
+
+          MockInteractions.keyEventOn(inputProvider, 'keypress', 13, 'ENTER');
         });
-
-        inputProvider.focus();
-        var activeElement = document.activeElement;
-        // get correct activeElement if shadow DOM is used
-        if (getDomMode(textInput) === "shadowDOM") {
-          activeElement = textInput.shadowRoot.activeElement;
-        }
-        assert.equal(activeElement.id, inputProvider.id, 'text element has lost focus');
-
-        inputProvider.value = "lorem ipsum delta";
-
-        MockInteractions.keyEventOn(inputProvider, 'keypress', 13, 'ENTER');
       });
-
     });
   </script>
 
