@@ -3,35 +3,39 @@
 
 <head>
   <meta charset="UTF-8">
-  <title></title>
+  <title>at-form-markdown demo</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-  <link rel="import" href="at-form-markdown.html">
-  <link rel="import" href="../layout/layout.html">
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../at-form-markdown.html">
+  <style is="custom-style">
+    .container {
+      margin: 32px 64px 0 64px;
+    }
+
+  </style>
 </head>
 
 <body>
-  <div class="vertical layout">
-    <div class="horizontal layout">
-      <at-form-markdown id="afMarkdown" label="Optional markdown"></at-form-markdown>
-    </div>
-    <div class="horizontal layout">
-      <at-form-markdown id="afMarkdownRequired" required="true" label="Required markdown"></at-form-markdown>
-    </div>
-    <div class="horizontal layout">
-      <at-form-markdown id="afMarkdownDisabled" disabled="true" label="Disabled markdown"></at-form-markdown>
-    </div>
-    <div class="vertical layout">
-      <h4>Hidden label demo</h4>
-      <at-form-markdown label="Demo label" hide-label="true"></at-form-markdown>
-    </div>
+  <div class="container">
+    <at-form-markdown id="afMarkdown" label="Optional markdown"></at-form-markdown>
+  </div>
+  <div class="container">
+    <at-form-markdown id="afMarkdownRequired" required="true" label="Required markdown" auto-validate></at-form-markdown>
+  </div>
+  <div class="container">
+    <at-form-markdown id="afMarkdownDisabled" disabled="true" label="Disabled markdown"></at-form-markdown>
+  </div>
+  <div class="container">
+    <h4>Hidden label demo</h4>
+    <at-form-markdown label="Demo label" hide-label="true"></at-form-markdown>
   </div>
   <script>
     document.addEventListener('WebComponentsReady', function(e) {
       var markdown = document.getElementById('afMarkdown');
     });
+
   </script>
 </body>
 
