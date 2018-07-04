@@ -219,9 +219,15 @@
       // if desired converter was not set as textContent of the at-form-markdown create everything programatically since declarative doesn't work in IE
 
       var defaultConverter = document.createElement('markdown-default-converter');
+      document.body.appendChild(defaultConverter);
+      document.body.removeChild(defaultConverter);
+
       // default converter doesn't have any configuration
 
       var sanitizingDecorator = document.createElement('markdown-sanitizing-decorator');
+      document.body.appendChild(sanitizingDecorator);
+      document.body.removeChild(sanitizingDecorator);
+
       // a converter instance of sanitizing converter needs to be set to default converter
       sanitizingDecorator._converterInstance = defaultConverter._converterInstance;
       this._instanceVariables.converter = sanitizingDecorator._converterInstance;
@@ -366,7 +372,7 @@
       if(showError === undefined) showError = this.autoValidate;
 
       // validate must validate the current value
-      var inputValue = this.$.wmdInput.value;
+      var inputValue = this.$ ? this.$.wmdInput.value : this.value;
 
       if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
         this.value = inputValue;
@@ -389,6 +395,8 @@
     },
 
     _updateUIValidState: function(isValid) {
+      if (!this.$) return;
+
       this.toggleClass('error', !isValid, this.$.label);
       this.toggleClass('error', !isValid, this.$.contentContainer);
       this.toggleClass('error', !isValid, this.$.hint);
