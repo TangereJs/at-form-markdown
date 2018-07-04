@@ -346,9 +346,20 @@
     },
 
     _internalValidStateUpdate: function(required) {
-      if (this._isReady) {
+      if (!this._isReady) return;
+        
+        if (this._showErrorsWhenAttached) {
+          this._showErrorsWhenAttached = undefined;
+          this.validate(true);
+          return;
+        
+        } else if (this._clearErrorsWhenAttached) {
+          this._clearErrorsWhenAttached = undefined;
+          this.validate(false);
+          return;
+        }
+  
         this.validate();
-      }
     },
 
     _valueChanged: function(newValue, oldValue) {
@@ -369,6 +380,14 @@
     },
 
     validate: function (showError) {
+      if (!this.$ && this.autoValidate == false && showError == true) {
+        // showError should be true when _internalValidStateUpdate is called from ready after element is attached
+        this._showErrorsWhenAttached = true;
+      
+      } else if (!this.$ && this.autoValidate == true && showError == false) {
+        this._clearErrorsWhenAttached = true;
+      }
+      
       if(showError === undefined) showError = this.autoValidate;
 
       // validate must validate the current value
