@@ -448,24 +448,55 @@
       }
     },
 
-    _inlineAttachmentExtraParamsChanged: function(oldValue, newValue) {
-      if (!this._isReady) {
+    _inlineAttachmentExtraParamsChanged: function(newValue, oldValue) {
+      if (!this._isReady) return;
+      if (this._inlineAttachmentInstance == undefined) return;
+      
+      if (this._isObject(newValue)) {
+        this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
         return;
       }
-      if (this._inlineAttachmentInstance !== undefined) {
-        this._inlineAttachmentInstance.settings.extraParams = this.inlineAttachmentExtraParams;
-      }
+
+      if (!this._isString(newValue)) return;
+
+      try {
+        newValue = JSON.parse(newValue);
+        this._inlineAttachmentInstance.settings.extraParams = newValue;
+      } catch(e) {}
     },
 
+    _isObject: function(obj) { return Object.prototype.toString.call(obj) === "[object Object]"; },
+    _isString: function(obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
+    _mediaPickerUrl: '/orchard.medialibrary/clientstorage/upload',
+
     _initializeInlineAttachment: function() {
-      if (this.inlineAttachmentUploadUrl === undefined || this.inlineAttachmentUploadUrl === '') {
-        return;
+      if (!this._isString(this.inlineAttachmentUploadUrl)) return;
+      if (this.inlineAttachmentUploadUrl === '') return;
+      
+      var jsonFieldName = this.inlineAttachmentJsonFieldName;
+      var extraParams;
+      if (this._isObject(this.inlineAttachmentExtraParams)) {
+        extraParams = this.inlineAttachmentExtraParams;
+        
+      } else if (this._isString(this.inlineAttachmentExtraParams)) {
+        try {
+          extraParams = JSON.parse(this.inlineAttachmentExtraParams);
+        } catch(e) {}
       }
+      
+      if (this.inlineAttachmentUploadUrl.toLowerCase() == this._mediaPickerUrl.toLowerCase()) {
+        jsonFieldName = "mediaUrl";
+        extraParams = {
+          folderPath: "attachment",
+          type: "image"
+        };
+      }
+      
       var _self = this;
 
       this._inlineAttachmentInstance = inlineAttachment.editors.input.attachToInput(this.$.wmdInput, {
         uploadUrl: this.inlineAttachmentUploadUrl,
-        jsonFieldName: this.inlineAttachmentJsonFieldName,
+        jsonFieldName: jsonFieldName,
         onFileUploadResponse: function(xhr) {
           var result = JSON.parse(xhr.responseText),
             filename = result[0][this.settings.jsonFieldName];
@@ -493,7 +524,7 @@
 
           this.originalName = originalName;
         },
-        extraParams: this.inlineAttachmentExtraParams
+        extraParams: extraParams
       });
     },
 
