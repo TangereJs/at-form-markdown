@@ -260,6 +260,8 @@
                 }
             }
         }
+        
+        xhr.open('POST', settings.uploadUrl);
 
         // Add any available extra headers
         if (typeof settings.extraHeaders === "object") {
@@ -270,7 +272,6 @@
             }
         }
 
-        xhr.open('POST', settings.uploadUrl);
         xhr.onload = function () {
             // If HTTP status is OK or Created
             if (xhr.status === 200 || xhr.status === 201) {

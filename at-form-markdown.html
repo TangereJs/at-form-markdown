@@ -524,7 +524,11 @@
 
           this.originalName = originalName;
         },
-        extraParams: extraParams
+        extraParams: extraParams,
+        extraHeaders: {
+          "X-Client": "Now",
+          "X-Requested-By": "at-form-markdown"
+        }
       });
     },
 
